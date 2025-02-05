@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { PDFDownloadLink, Document, Page, View, Text, StyleSheet, Image } from '@react-pdf/renderer';
+import { PDFDownloadLink, Document, Page, View, Text, StyleSheet } from '@react-pdf/renderer';
 import { Bar } from 'react-chartjs-2';
 import { Button, Box } from '@mui/material';
 //import emailjs from '@emailjs/browser';
