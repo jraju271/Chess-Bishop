@@ -10,6 +10,10 @@
     ],
     "routes": [
       {
+        "src": "/stockfish/stockfish.js",
+        "dest": "/public/stockfish/stockfish.js"
+      },
+      {
         "src": "/(.*)",
         "dest": "/index.html"
       }
