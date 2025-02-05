@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
-      external: ['@react-pdf/renderer'],
+      external: ['@react-pdf/renderer', '@emailjs/browser'],
     },
   },
 })
