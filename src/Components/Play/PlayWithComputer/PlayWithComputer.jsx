@@ -589,7 +589,7 @@ const PlayWithComputer = () => {
 
   function getEvaluationFromStockfish_1(fen) {
     return new Promise((resolve, reject) => {
-      const stockfish = new Worker("../../../../stockfish/stockfish.js");
+      const stockfish = new Worker("/stockfish/stockfish.js");
       stockfish.postMessage("uci"); // Initialize Stockfish
       stockfish.postMessage(`position fen ${fen}`);
       stockfish.postMessage("go depth 15"); // Set depth for evaluation  
@@ -736,7 +736,7 @@ const PlayWithComputer = () => {
 
   async function getEvaluationFromStockfish(fen) {
     return new Promise((resolve) => {
-      const stockfish = new Worker("../../../../stockfish/stockfish.js");
+      const stockfish = new Worker("/stockfish/stockfish.js");
 
       let isResolved = false; // Track if resolved
 
@@ -778,7 +778,7 @@ const PlayWithComputer = () => {
 
   async function getAlternativeMoves(fen) {
     return new Promise((resolve) => {
-        const stockfish = new Worker("../../../../stockfish/stockfish.js");
+        const stockfish = new Worker("/stockfish/stockfish.js");
         stockfish.postMessage("uci");
         stockfish.postMessage(`position fen ${fen}`);
         stockfish.postMessage("go depth 15");
