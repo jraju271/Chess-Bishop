@@ -15,7 +15,7 @@
         "headers": {
             "content-type": "application/javascript"
         },
-        "dest": "/public/stockfish/stockfish.js"
+        "dest": "/stockfish/stockfish.js"
       },
       {
         "src": "/(.*)",
