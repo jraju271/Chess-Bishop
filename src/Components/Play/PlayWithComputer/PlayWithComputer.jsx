@@ -30,7 +30,7 @@ const PlayWithComputer = () => {
 
   // Initialize Stockfish when component mounts
   useEffect(() => {
-    const sf = new Worker("./stockfish/stockfish.js");
+    const sf = new Worker("/stockfish/stockfish.js");
     setStockfish(sf);
 
     // Initialize Stockfish with UCI commands
