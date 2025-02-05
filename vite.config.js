@@ -8,6 +8,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['@react-pdf/renderer'],
     },
+    outDir: 'dist'
   },
 })
 
