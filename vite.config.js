@@ -8,13 +8,9 @@ export default defineConfig({
     rollupOptions: {
       external: ['@react-pdf/renderer'],
     },
-    outDir: 'dist'
+    outDir: 'dist',
+    assetsDir: 'assets'
   },
   publicDir: 'public',
-  server: {
-    headers: {
-      'Content-Type': 'application/javascript'
-    }
-  }
 })
 
