@@ -30,7 +30,7 @@ const PlayWithComputer = () => {
 
   // Initialize Stockfish when component mounts
   useEffect(() => {
-    const sf = new Worker("/stockfish/stockfish.js");
+    const sf = new Worker(new URL('/stockfish/stockfish.js', import.meta.url));
     setStockfish(sf);
 
     // Initialize Stockfish with UCI commands
@@ -589,7 +589,7 @@ const PlayWithComputer = () => {
 
   function getEvaluationFromStockfish_1(fen) {
     return new Promise((resolve, reject) => {
-      const stockfish = new Worker("/stockfish/stockfish.js");
+      const stockfish = new Worker(new URL('/stockfish/stockfish.js', import.meta.url));
       stockfish.postMessage("uci"); // Initialize Stockfish
       stockfish.postMessage(`position fen ${fen}`);
       stockfish.postMessage("go depth 15"); // Set depth for evaluation  
@@ -736,7 +736,7 @@ const PlayWithComputer = () => {
 
   async function getEvaluationFromStockfish(fen) {
     return new Promise((resolve) => {
-      const stockfish = new Worker("/stockfish/stockfish.js");
+      const stockfish = new Worker(new URL('/stockfish/stockfish.js', import.meta.url));
 
       let isResolved = false; // Track if resolved
 
@@ -778,7 +778,7 @@ const PlayWithComputer = () => {
 
   async function getAlternativeMoves(fen) {
     return new Promise((resolve) => {
-        const stockfish = new Worker("/stockfish/stockfish.js");
+        const stockfish = new Worker(new URL('/stockfish/stockfish.js', import.meta.url));
         stockfish.postMessage("uci");
         stockfish.postMessage(`position fen ${fen}`);
         stockfish.postMessage("go depth 15");
