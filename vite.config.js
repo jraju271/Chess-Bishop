@@ -10,6 +10,11 @@ export default defineConfig({
     },
     outDir: 'dist'
   },
-  publicDir: 'public'
+  publicDir: 'public',
+  server: {
+    headers: {
+      'Content-Type': 'application/javascript'
+    }
+  }
 })
 
