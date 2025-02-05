@@ -1,0 +1,61 @@
+.customDialog {
+    width: 25%;
+    text-align: center;
+    border-radius: 3% !important;
+    font-Family : var(--PrimaryFontFamily) !important;
+}
+
+.customDialogTitle {
+    background-color: var(--ScondaryButtonColor);
+
+    /* color: var(--PrimaryTextColor) !important; */
+    color: var(--SecondaryTextColor);
+    font-size: 24px;
+    text-transform: uppercase;
+    font-weight: bold !important;
+    font-Family : var(--PrimaryFontFamily) !important;
+}
+
+.customDialogContentText {
+    padding: 5%;
+    font-size: 28px !important;
+    color: var(--PrimaryTextColor) !important;
+    font-weight: bold !important;
+    font-Family : var(--PrimaryFontFamily) !important;
+}
+
+.customButton {
+    background-color: var(--PrimaryButtonColor) !important;
+    color: var(--PrimaryTextColor) !important;
+    font-Family : var(--PrimaryFontFamily) !important;
+}
+
+.MpCopyBtn{
+    width: 100% !important;
+    padding: 3% !important;
+    font-family: var(--PrimaryFontFamily) !important;
+    font-size: 18px !important;
+    background-color: var(--PrimaryButtonColor) !important;
+    color: var(--PrimaryTextColor) !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    font-Family : var(--PrimaryFontFamily) !important;
+}
+.MpCopyBtn1{
+    width: 100% !important;
+    padding: 6% !important;
+    font-size: 16px !important;
+    background-color: var(--PrimaryButtonColor) !important;
+    color: var(--PrimaryTextColor) !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    box-shadow: 1px 2px 4px var(--PrimaryBoxShadow)!important;
+    border-bottom:5px solid var(--PrimaryTextColor) !important ;
+    font-Family : var(--PrimaryFontFamily) !important;
+}
+.MpCopyBtn2{
+    width: 100% !important;
+    padding: 6% !important;
+    font-Family : var(--PrimaryFontFamily) !important;
+
+}

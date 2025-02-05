@@ -1,0 +1,92 @@
+.PwCBox{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: black; */
+}
+
+.PwC_ChessBoardBox{
+    width: 40%;
+    color: var(--SecondaryTextColor);
+    background-color: black;
+}
+
+.Pwc_GamePanel{
+    margin-left: 1%;
+    width: 20%;
+    height: 90%;
+    background-color: var(--PrimaryBoxColor);
+    border-radius: 1%;
+    overflow: hidden;
+}
+.Pwc_GamePanelHeader{
+    box-shadow:1px 1px 2px var(--PrimaryTextColor);
+}
+.Pwc_GamePanelHeader button{
+    min-width: 33.4% !important;
+    height: 10% !important;
+    box-shadow: 0px 1px 0.9px var(--PrimaryTextColor) !important;
+    color: var(--PrimaryTextColor) !important;
+}
+.Pwc_GamePanelHeader .Mui-selected{
+    background-color: var(--PrimaryButtonColor);
+
+
+}
+.Pwc_GamePanelHeader .MuiTabs-indicator {
+    background-color: var(--PrimaryTextColor);
+}
+.Panel::-we bkit-scrollbar{
+    display: none;
+}
+.Panel{
+    margin-top: 3%;
+    overflow-y: auto;
+    height: 90vh;
+
+}
+.Panel div{
+    text-align: center;
+    font-family: var(--PrimaryFontFamily) !important;
+}
+
+.SliderDepth{
+    color: var(--PrimaryButtonColor) !important;
+}
+.SliderDepth span{
+    color: var(--PrimaryTextColor);
+}
+
+.css-2ulfj5-MuiTypography-root {
+    margin: 0;
+    font-family: var(--PrimaryFontFamily) !important;
+    font-weight: bolder !important;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    letter-spacing: 0.0075em;
+}
+
+.css-ahj2mt-MuiTypography-root {
+    margin: 0;
+    font-family: var(--PrimaryFontFamily) !important;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+}
+.ChartLayout{
+   background-color: white;
+   border-radius: 4%;
+   margin: 2%;
+   width: 100%;
+   height: 100%;
+}
+
+.css-5ryogn-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked {
+    color: var(--PrimaryButtonColor) !important;
+}
+.css-5ryogn-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track {
+    background-color: var(--PrimaryTextColor) !important;
+}

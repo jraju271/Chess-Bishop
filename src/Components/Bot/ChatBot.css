@@ -1,0 +1,73 @@
+#ChatBotBox{
+    position: fixed;
+    bottom:-0.5%;
+    right: 0%;
+    width: auto;
+    height: 25%;
+    z-index: 99999 !important;
+}
+
+.ChatImage{
+    width: 100%;
+    height: 100%;
+}
+.ChatBox{
+   position: absolute !important;
+   bottom:5% !important;
+   right: 5% !important;
+   width: 25% !important;
+   height: 75% !important;
+   background-color: #fff !important;
+   border-radius: 1% !important;
+   overflow: hidden !important;
+   padding: 0 !important;
+   box-shadow: 5px 5px 10px rgb(148, 148, 148);
+
+}
+
+.MessageBox::-webkit-scrollbar {
+    display: none;
+}
+
+.MessageBox{
+    position: relative;
+    display: grid;
+    text-overflow: clip;
+    height: fit-content;
+    max-height: 85%;
+    padding: 5%;
+    width: 90%;
+    overflow-y: auto;
+
+
+}
+.MessageText{
+    margin:2%;
+    width: auto;
+    border-radius: 8px;
+    padding: 3%;
+    height:fit-content;
+    /* justify-self: left;
+    background-color: var(--SecondaryBackgroud2); */
+    box-shadow: 1px 1px 5px rgb(141, 141, 141) inset;
+    font-family: var(--PrimaryFontFamily);
+    color: var(--PrimaryTextColor);
+}
+.MessageInputBox{
+    position: absolute;
+    bottom: 0%;
+    width: 100% ;
+    height:8%;
+    padding: 0%;
+    /* background-color: var(--PrimaryBoxColor); */
+    background-color: #fff;
+
+    display: flex;
+    align-items: center;
+}
+
+.ChatCloseButton{
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+}

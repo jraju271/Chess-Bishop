@@ -1,0 +1,147 @@
+.Navbar_Button{
+    width: 50px !important;
+    height: 40px !important;
+    transition: width 0.5s !important;
+    box-shadow:var(--PrimaryBoxShadow) !important;
+    background-color: var(--PrimaryButtonColor) !important;
+    font-family:var(--PrimaryFontFamily) !important;
+    font-size: medium !important;
+    color: var(--PrimaryTextColor) !important;
+    border: none !important;
+    z-index: 9999;
+    box-shadow: 0.5px 1px 2px var(--PrimaryTextColor) !important;
+    margin-bottom: 3px !important;
+
+}
+
+.Navbar_Button div{
+    display: flex !important;
+    width: auto;
+}
+
+.Navbar_Button span{
+    display: none;
+}
+
+.Navbar_Button:hover{
+    width: 200px !important;
+}
+.Navbar_Button:hover span{
+    margin-left: 10px !important;
+    display: flex;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+
+.PlayGroupButton{
+    background-color:var(--PrimaryBoxColor) !important;
+    
+}
+.PlayGroupButton button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--PrimaryButtonColor);
+    color: var(--PrimaryTextColor);
+    width:100% !important;
+    height: 50px !important;
+    margin-bottom: 3%;
+    font-size:medium;
+    font-family: var(--PrimaryFontFamily) !important;
+
+}
+.PlayGroupButton button:hover{
+    background-color: var(--PrimaryButtonColor) !important;
+}
+
+.ButtonLink{
+    text-decoration: none !important;
+}
+
+.nav-container {
+  position: fixed;
+  width: 800px;    /* Reduced from 900px */
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.nav-background {
+  position: relative;
+  width: 100%;
+  height: 48px;    /* Reduced from 56px */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 8px;
+}
+
+.nav-buttons {
+  position: relative;
+  display: flex;
+  justify-content: space-evenly; /* Changed from space-between */
+  align-items: center;
+  height: 100%;
+  padding: 0 15px;
+}
+
+.nav-button {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 8px !important;  /* Reduced from 10px */
+  gap: 8px !important;
+  width: 110px !important; /* Reduced from 120px */
+  height: 48px !important; /* Reduced from 56px */
+  font-size: 14px !important; /* Reduced from 16px */
+  background: transparent !important;
+  color: #F6F6F6 !important;
+  transition: all 0.3s ease !important;
+}
+
+.nav-button:hover, .nav-button.active {
+  background: radial-gradient(81.1% 116.67% at 50% 100%, #FFC008 0%, rgba(255, 192, 8, 0.81) 21%, rgba(255, 192, 8, 0.49) 51%, rgba(255, 192, 8, 0.29) 70%, rgba(255, 192, 8, 0) 100%), #8E5C00 !important;
+  color: #191919 !important;
+  font-weight: 700 !important;
+}
+
+.play-now {
+  width: 140px !important; /* Reduced from 180px */
+  background: transparent !important;
+  color: #F6F6F6 !important;
+  font-weight: 500 !important;
+}
+
+/* Dialog styles */
+.nav-dialog {
+  background: transparent !important;
+}
+
+.nav-dialog-content {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border-radius: 8px !important;
+  padding: 20px !important;
+}
+
+.nav-dialog-button {
+  width: 100% !important;
+  height: 48px !important;
+  margin-bottom: 10px !important;
+  background: transparent !important;
+  color: #F6F6F6 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+.nav-dialog-button:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.nav-link {
+  text-decoration: none;
+}

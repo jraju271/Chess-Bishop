@@ -1,0 +1,188 @@
+/* Remove the dark box from the form by updating .auth-content */
+.auth-content {
+  width: 400px;
+  background: transparent; /* removed dark background */
+  padding: 0; /* removed padding */
+  border-radius: 0; /* removed rounded corners */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative; /* needed for absolute positioned children */
+}
+
+/* Title remains largely the same */
+.auth-title {
+  font-family: 'Montserrat';
+  font-weight: 600;
+  font-size: 32px;
+  color: #F6F6F6;
+  margin-bottom: 20px;
+}
+
+/* Remove unused action button styling (or keep for non–primary buttons) */
+.AuthActionButton {
+  background-color: var(--PrimaryButtonColor) !important;
+  font-family: var(--PrimaryFontFamily) !important;
+  font-size: large !important;
+  width: fit-content;
+}
+
+/* Updated primary action button style to match Figma Component 58 */
+.primary-action-button {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  position: absolute;
+  width: 200px;
+  height: 40px;
+  left: 1279px;
+  top: 683px;
+  background: radial-gradient(
+      120.76% 83.75% at 50% 100%,
+      #ffc008 0%,
+      rgba(255, 192, 8, 0.815) 18.5%,
+      rgba(255, 192, 8, 0.485) 51.5%,
+      rgba(255, 192, 8, 0.3) 70%,
+      rgba(255, 192, 8, 0) 100%
+    ),
+    #8e5c00;
+  border-radius: 32px;
+  font-family: 'Open Sans';
+  font-weight: 600;
+  font-size: 14px;
+  color: #191919;
+  border: none;
+  text-transform: none;
+}
+
+/* Optional: style for the toggle button (which is not absolutely positioned) */
+.auth-toggle-button {
+  margin-top: 20px;
+  font-family: 'Open Sans';
+  text-transform: none;
+}
+
+/* Figma absolute positioning for input fields (assumed for login form) */
+.auth-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 4px;
+  position: absolute;
+  width: 480px;
+  height: 56px;
+}
+
+.email-input {
+  left: 1139px;
+  top: 429px;
+  backdrop-filter: blur(25px);
+}
+
+.password-input {
+  left: 1139px;
+  top: 499px; /* adjust vertical spacing as needed */
+}
+
+/* Other existing styles – adjust as needed */
+.LoginContainer {
+  background-color: var(--PrimaryBoxColor);
+  color: var(--PrimaryTextColor) !important;
+  box-shadow: 0px 0px 20px rgb(122, 122, 122);
+  font-family: var(--PrimaryFontFamily) !important;
+}
+
+.LoginContainer div {
+  color: var(--PrimaryTextColor) !important;
+}
+
+/* .menu-flags {
+  width: 100%;
+  height: 56px;
+  background: rgba(212, 212, 212, 0.1);
+  border: 1px solid #cbc7cb;
+  border-radius: 8px;
+  backdrop-filter: blur(25px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+} */
+
+.menu-flags-button {
+  width: 50px;
+  height: 50px;
+  border: 1px solid white !important;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px); /* For Safari support */
+  /* padding: 4px 8px; */
+  /* font-size: 12px; */
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+  background-color: transparent !important; /* Ensures transparency */
+  margin-top: 16px;
+}
+
+
+.ProfileImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: aqua;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  border: 5px solid white;
+  margin-top: 10%;
+}
+
+.ProfileImage button {
+  width: 100%;
+  color: aliceblue;
+  background-color: rgba(131, 131, 131, 0.541);
+}
+
+.ProfileBanner {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url('../../assets//Image/CarouselBox/signUp_banner_1.png');
+}
+
+.auth-container {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+      270deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.2) 43.4%,
+      rgba(0, 0, 0, 0.4) 52.78%,
+      rgba(0, 0, 0, 0.58423) 61.72%,
+      rgba(0, 0, 0, 0.6) 71.25%,
+      rgba(0, 0, 0, 0.707105) 82.68%,
+      rgba(0, 0, 0, 0.8) 100%
+    ),
+    url('../../assets/Image/BackGround/LoginPage_Bg.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.auth-background {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 50px;
+}

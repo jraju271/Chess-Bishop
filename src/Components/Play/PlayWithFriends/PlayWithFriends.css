@@ -1,0 +1,95 @@
+.PwFBox {
+    width: 100%;
+    height: 95%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.PwF_ChessBoardBox {
+    width: 39%;
+    height: auto;
+    /* background-color: aquamarine; */
+    color: var(--SecondaryTextColor);
+    font-size: 20px;
+}
+
+.PwF_GamePanel {
+    margin-left: 1%;
+    width: 25%;
+    height: 90%;
+    background-color: var(--PrimaryBoxColor);
+    border-radius: 1%;
+    overflow: hidden;
+
+}
+
+.GamePanelHeader {
+    box-shadow:1px 1px 2px var(--PrimaryTextColor);
+}
+
+.Pwf_GamePanelHeader button {
+    min-width: 33.4% !important;
+    height: 10% !important;
+    box-shadow: 0px 1px 0.9px var(--PrimaryTextColor) !important;
+    color: var(--PrimaryTextColor) !important;
+}
+
+.Pwf_GamePanelHeader .Mui-selected {
+    background-color: var(--PrimaryButtonColor);
+
+
+}
+
+.Pwf_GamePanelHeader .MuiTabs-indicator {
+    background-color: var(--PrimaryTextColor);
+}
+
+.Panel {
+    margin-top: 3%;
+}
+
+.Panel div {
+    text-align: center;
+    font-family: var(--PrimaryFontFamily);
+    color: var(--PrimaryTextColor);
+}
+
+.SliderDepth {
+    color: var(--PrimaryButtonColor) !important;
+}
+
+.SliderDepth span {
+    color: var(--PrimaryTextColor);
+}
+
+.GameEndIndication {
+    color: var(--PrimaryTextColor);
+    text-align: center;
+}
+
+
+
+.title{
+    color: var(--PrimaryTextColor);
+    font-Family : var(--PrimaryFontFamily) !important;
+    font-weight: bolder !important;
+}
+
+
+
+
+.start-button{
+    width: 100% !important;
+    font-Family : var(--PrimaryFontFamily) !important;
+    padding: 6% !important;
+    font-size: 16px !important;
+    background-color: var(--PrimaryButtonColor) !important;
+    color: var(--PrimaryTextColor) !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    box-shadow: 1px 2px 4px var(--PrimaryBoxShadow)!important;
+    border-bottom:5px solid var(--PrimaryTextColor) !important ;
+
+}

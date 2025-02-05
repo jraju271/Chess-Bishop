@@ -1,0 +1,99 @@
+.LeanContainer{
+    /* position:'fixed',top:'25%',width:'80%',backgroundColor:'red',width:'100vh',height:'100vh'; */
+    position: fixed;
+    top: 10%;
+    width: 60% !important;
+    background-color:var(--PrimaryBoxColor);
+    max-width: 100% !important;
+    padding: 0 !important;
+    border-radius: 1%;
+
+}
+.SideBar{
+    padding: 0 !important;
+    background-color: transparent !important;
+    color: var(--SecondaryTextColor) !important;
+    border-radius: 2% !important;
+}
+
+.SideBar span{
+    color: white !important;
+}
+.MobileStepper span{
+
+    width: 100% !important;
+    background-color: var(--PrimaryButtonColor);
+    height: 6px !important;
+
+}
+.LeanContainer::-webkit-scrollbar {
+    display: none;
+  }
+.LeanContainer a{
+    text-decoration: none !important;
+}
+#nested-list-subheader{
+    color: white !important;
+    font-family: var(--PrimaryFontFamily)!important;
+    font-size: large !important;
+    background-color: #3D3E3F !important;
+    box-shadow:var(--PrimaryBoxShadow) !important;
+    background-color:var(--PrimaryButtonColor) !important;
+}
+.ToggleButton{
+    color: var(--PrimaryTextColor)!important;
+    font-family: var(--PrimaryFontFamily) !important;
+    font-size: large !important;
+    background-color: var(--PrimaryBoxColor)!important;
+}
+.btn{
+    color: var(--PrimaryTextColor)!important;
+    font-family: var(--PrimaryFontFamily) !important;
+    font-size: large !important;
+    background-color: var(--PrimaryBoxColor)!important;
+}
+.Mui-selected{
+    box-shadow:var(--PrimaryBoxShadow) !important;
+    background-color:var(--PrimaryButtonColor) !important;
+}
+.CardContent div{
+    /* font-family: 'Balsamiq Sans', sans-serif !important; */
+    font-family: var(--PrimaryFontFamily);
+    color: black ;
+}
+
+.ImageBox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: var(--PrimaryFontFamily) !important;
+}
+.ImageBox p{
+
+    font-family: var(--PrimaryFontFamily) !important;
+}
+
+.TitleText{
+    font-family:var(--PrimaryFontFamily) !important;
+    font-weight: bold;
+}
+
+.MuiStep-vertical .MuiSvgIcon-root{
+    color:var(--PrimaryButtonColor) !important;
+}
+.MuiStep-vertical button{
+    background-color: var(--PrimaryButtonColor);
+}
+
+.MuiStep-vertical button:hover{
+    background-color: var(--PrimaryButtonColor);
+}
+.MuiLinearProgress-root span{
+    background-color: var(--PrimaryButtonColor);
+}
+.css-117w1su-MuiStepIcon-text{
+    fill:var(--PrimaryTextColor) !important;
+    font-size: 0.75rem;
+    font-family:var(--PrimaryFontFamily) !important;
+}

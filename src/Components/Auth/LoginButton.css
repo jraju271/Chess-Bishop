@@ -1,0 +1,31 @@
+.LoginButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.LoginButton button {
+  width: 120px; /* Reduced width */
+  height: 35px; /* Reduced height */
+  padding: 8px; /* Reduced padding */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background: radial-gradient(120.76% 83.75% at 50% 100%, #FFC008 0%, rgba(255, 192, 8, 0.815) 18.5%, rgba(255, 192, 8, 0.485) 51.5%, rgba(255, 192, 8, 0.3) 70%, rgba(255, 192, 8, 0) 100%), #8E5C00;
+  border-radius: 32px;
+  color: #191919;
+  font-family: var(--PrimaryFontFamily) !important;
+  font-weight: 600;
+  text-transform: none !important;
+  box-sizing: border-box;
+  border: none;
+}
+
+.LoginButton button:hover {
+  background: radial-gradient(120.76% 83.75% at 50% 100%, #FFC008 0%, rgba(255, 192, 8, 0.815) 18.5%, rgba(255, 192, 8, 0.485) 51.5%, rgba(255, 192, 8, 0.3) 70%, rgba(255, 192, 8, 0) 100%), #8E5C00;
+  box-shadow: 0px 0px 15px rgba(255, 192, 8, 0.3) !important;
+}
