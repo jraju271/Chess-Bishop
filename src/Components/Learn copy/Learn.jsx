@@ -1,7 +1,7 @@
 
 import './Learn.css'
 import TopicBanner from '../../assets/Image/LeanPageImages/TopicBanner.jpg'
-import Locked from '../../assets/Image/LeanPageImages/Locked.png'
+//import Locked from '../../assets/Image/LeanPageImages/Locked.png'
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { Container } from '@mui/material'

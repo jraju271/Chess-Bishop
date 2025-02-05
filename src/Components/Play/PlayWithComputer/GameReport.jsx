@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { PDFDownloadLink, Document, Page, View, Text, StyleSheet, Image } from '@react-pdf/renderer';
 import { Bar } from 'react-chartjs-2';
 import { Button, Box } from '@mui/material';
-import emailjs from '@emailjs/browser';
+//import emailjs from '@emailjs/browser';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import {SPEAK} from '../../Middleware/Utils/Speak'
-import './Intro.css'
+import './intro.css'
 
 function Intro() {
   const hasSeenTour = localStorage.getItem('hasSeenTour');
