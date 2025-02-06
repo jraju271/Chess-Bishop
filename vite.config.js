@@ -9,7 +9,8 @@ export default defineConfig({
       external: ['@react-pdf/renderer'],
     },
     outDir: 'dist',
-    assetsDir: 'assets'
+    assetsDir: 'assets',
+    modulePreload: true
   },
   publicDir: 'public',
 })
