@@ -6,9 +6,9 @@ export default defineConfig({
   base: './',
   plugins: [react()],
   build: {
-    rollupOptions: {
-      external: ['@react-pdf/renderer'],
-    },
+    // rollupOptions: {
+    //   external: ['@react-pdf/renderer'],
+    // },
     outDir: 'dist',
     assetsDir: 'assets'
   },
