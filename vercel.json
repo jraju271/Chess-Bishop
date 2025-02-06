@@ -1,15 +1,22 @@
 {
-    "routes": [
-      {
-        "src": "/stockfish/stockfish.js",
-        "headers": {
-          "Content-Type": "application/javascript"
-        },
-        "dest": "/stockfish/stockfish.js"
+  "routes": [
+    {
+      "src": "/stockfish/stockfish.js",
+      "headers": {
+        "Content-Type": "application/javascript"
       },
-      {
-        "src": "/(.*)",
-        "dest": "/index.html"
-      }
-    ]
-  }
+      "dest": "/stockfish/stockfish.js"
+    },
+    {
+      "src": "/main.jsx",
+      "headers": {
+        "Content-Type": "application/javascript"
+      },
+      "dest": "/main.jsx"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
