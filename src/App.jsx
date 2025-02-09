@@ -46,6 +46,7 @@ import ChessTechniques from "./Components/Puzzle/ChessTechniques";
 import GameStrategies from "./Components/Puzzle/GameStrategies";
 import AdvancedCheckmates from './Components/Puzzle/AdvancedCheckmates.jsx'
 import ChessQuiz from './Components/Quiz/ChessQuiz.jsx'
+import ChessGameReview from './Components/Legends/FamousGameAnalysis.jsx'
 
 
 function App() {
@@ -99,6 +100,7 @@ function App() {
               <Route path="/game-strategies" element={<GameStrategies />} />
               <Route path="/advanced-checkmates" element={<AdvancedCheckmates />} />
               <Route path="/chess-quiz" element={<ChessQuiz />} />
+              <Route path="/famous-games" element={<ChessGameReview />} />
             </Routes> 
           </ErrorBoundary>
         </Box>
@@ -106,7 +108,7 @@ function App() {
         <Box className='NavigationBox'><NavigationBar /></Box>
         <LoginButton />
         <ChatBot />
-        <Intro />
+        {/* <Intro /> */}
       </BrowserRouter>
     </>
   );

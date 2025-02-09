@@ -44,14 +44,21 @@ function NavigationBar() {
             </Button>
           </Link>
           
-          <Link to="/puzzle" className="nav-link">
+          {/* <Link to="/puzzle" className="nav-link">
             <Button 
               className={`nav-button ${activeButton === 'puzzle' ? 'active' : ''}`}
               onClick={() => setActiveButton('puzzle')}
             >
               <Extension sx={{ mr: 1 }} /> Puzzle
             </Button>
-          </Link>
+          </Link> */}
+
+          <Button 
+            className={`nav-button ${open ? 'active' : ''}`}
+            onClick={handleClickOpen}
+          >
+            Play Now
+          </Button>
 
           <Link to="/learn" className="nav-link">
             <Button 
@@ -62,30 +69,25 @@ function NavigationBar() {
             </Button>
           </Link>
 
-          <Button 
-            className={`nav-button ${open ? 'active' : ''}`}
-            onClick={handleClickOpen}
-          >
-            Play Now
-          </Button>
+      
 
-          <Link to="/legends" className="nav-link">
+          {/* <Link to="/famous-games" className="nav-link">
             <Button 
               className={`nav-button ${activeButton === 'legends' ? 'active' : ''}`}
               onClick={() => setActiveButton('legends')}
             >
               Legends
             </Button>
-          </Link>
+          </Link> */}
 
-          <Link to="/settings" className="nav-link">
+          {/* <Link to="/settings" className="nav-link">
             <Button 
               className={`nav-button ${activeButton === 'settings' ? 'active' : ''}`}
               onClick={() => setActiveButton('settings')}
             >
               <Settings sx={{ mr: 1 }} /> Settings
             </Button>
-          </Link>
+          </Link> */}
         </Box>
       </Box>
 
@@ -108,12 +110,12 @@ function NavigationBar() {
           <Link to='/PlayWithComputer' onClick={handleClose} className='ButtonLink'>
             <Button className="nav-dialog-button" startIcon={<SmartToy />}>PLAY With COMPUTER</Button>
           </Link>
-          <Link to='/PlayWithFriends' onClick={handleClose} className='ButtonLink'>
+          {/* <Link to='/PlayWithFriends' onClick={handleClose} className='ButtonLink'>
             <Button className="nav-dialog-button" startIcon={<People />}>PLAY With FRIENDS</Button>
           </Link>
           <Link to='/Under' onClick={handleClose} className='ButtonLink'>
             <Button className="nav-dialog-button" startIcon={<PersonSearch />}>PLAY With RANDOM</Button>
-          </Link>
+          </Link> */}
         </DialogContent>
       </Dialog>
     </Box>

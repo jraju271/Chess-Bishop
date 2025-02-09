@@ -7,6 +7,8 @@ import { Send_GPT_Request } from '../../Middleware/bot/BotEngine';
 import { setMemojiState } from '../../Middleware/Meta/StateController';
 import './ChatBot.css'
 
+import BotAvatar from '../../assets/Image/Bot/Bot_Avatar.png'  // Add this import
+
 
 function ChatBot() {
   const CurrentState = useSelector((state) => state.STATE.value)
@@ -110,7 +112,8 @@ function ChatBot() {
         </IconButton>
       </Container>}
       <Box id='ChatBotBox'>
-        <img src={CurrentState.MemojiState} className='ChatImage' onClick={() => { setisChatOpen(!isChatOpen); dispatch(setMemojiState('Active')); }} />
+        {/* <img src={CurrentState.MemojiState} className='ChatImage' onClick={() => { setisChatOpen(!isChatOpen); dispatch(setMemojiState('Active')); }} /> */}
+        <img src={BotAvatar} className='ChatImage' onClick={() => { setisChatOpen(!isChatOpen); dispatch(setMemojiState('Active')); }} />
       </Box>
 
     </>
