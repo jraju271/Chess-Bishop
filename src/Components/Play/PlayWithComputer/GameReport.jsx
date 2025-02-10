@@ -77,7 +77,95 @@ const SimpleBarChart = ({ data }) => (
   </View>
 );
 
-// Live preview chart component with updated configuration
+// // Live preview chart component with updated configuration
+// const PerformanceChart = ({ data }) => {
+//   const chartRef = useRef(null);
+
+//   const chartData = {
+//     labels: ['Game 1', 'Game 2', 'Game 3'],
+//     datasets: [{
+//       label: 'Game Performance',
+//       data: data,
+//       backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+//       borderColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+//       borderWidth: 1,
+//     }]
+//   };
+
+//   const options = {
+//     scales: {
+//       y: {
+//         beginAtZero: true,
+//         max: 100,
+//         ticks: {
+//           stepSize: 20, // Changed to 20 for 0,20,40,60,80,100
+//           callback: function(value) {
+//             return value; // Removed % symbol
+//           }
+//         },
+//         grid: {
+//           drawOnChartArea: true,
+//           color: '#E0E0E0'
+//         },
+//         title: {
+//           display: true,
+//           text: 'Performance Score (%)',
+//           font: {
+//             size: 14,
+//             color: '#666666'
+//           }
+//         }
+//       },
+//       x: {
+//         grid: {
+//           drawOnChartArea: true
+//         },
+//         title: {
+//           display: true,
+//           text: 'Games',
+//           font: {
+//             size: 14
+//           }
+//         }
+//       }
+//     },
+//     plugins: {
+//       legend: {
+//         display: true,
+//         labels: {
+//           usePointStyle: false, // Changed from true to false
+//           boxWidth: 15,
+//           boxHeight: 15,
+//           color: '#666666', // Matching label color
+//           font: {
+//             size: 12,
+//             color: '#666666'
+//           },
+//           generateLabels: (chart) => [{
+//             text: 'Game Performance',
+//             fillStyle: 'transparent',
+//             strokeStyle: '#666666', // Matching label color
+//             lineWidth: 1,
+//             color: '#666666', // Added this to match label color
+//             font: {
+//               color: '#666666'
+//             }
+//           }]
+//         }
+//       },
+//       title: {
+//         color: '#666666',
+//         font: {
+//           color: '#666666'
+//         }
+//       }
+//     }
+//   };
+
+//   return <Bar ref={chartRef} data={chartData} options={options} id="performance-chart" />;
+// };
+
+
 const PerformanceChart = ({ data }) => {
   const chartRef = useRef(null);
 
@@ -136,27 +224,28 @@ const PerformanceChart = ({ data }) => {
           usePointStyle: false, // Changed from true to false
           boxWidth: 15,
           boxHeight: 15,
-          color: '#666666', // Matching label color
+          color: 'white', // Set label color to white
           font: {
             size: 12,
-            color: '#666666'
+            color: 'white' // Set font color to white
           },
           generateLabels: (chart) => [{
             text: 'Game Performance',
-            fillStyle: 'transparent',
-            strokeStyle: '#666666', // Matching label color
-            lineWidth: 1,
-            color: '#666666', // Added this to match label color
-            font: {
-              color: '#666666'
-            }
+            fillStyle: 'transparent', // Make the legend box transparent
+            strokeStyle: 'white', //#666666 is equivalent to 'gray'
+            // lineWidth: 1,
+            fontColor: '#FFFFFF', //#FFFFFF is equivalent to 'white'
+            // font: {
+            //   color: 'white'
+            // }
           }]
         }
       },
       title: {
-        color: '#666666',
+        color: 'white', // Set title color to white
         font: {
-          color: '#666666'
+          size: 12,
+          color: 'white' // Set font color to white
         }
       }
     }
@@ -164,6 +253,7 @@ const PerformanceChart = ({ data }) => {
 
   return <Bar ref={chartRef} data={chartData} options={options} id="performance-chart" />;
 };
+
 
 const PDFDocument = ({ playerData, gameData }) => (
   <Document>
