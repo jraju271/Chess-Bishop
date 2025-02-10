@@ -198,10 +198,10 @@ const quizSections = {
 
 const CustomStepLabel = styled(StepLabel)(({ theme }) => ({
   '& .MuiStepIcon-root': {
-    color: '#8E5C00', // Default color
+    color: '#8E5C00 ! important', // Default color
   },
   '& .MuiStepIcon-text': {
-    fill: 'white !important', // Text color
+    fill: 'white ! important', // Text color
   },
   '& .MuiStepIcon-active': {
     color: '#8E5C00', // Active color
@@ -613,8 +613,8 @@ const ChessQuiz = ({ userName }) => {
   //       </Button>
   //     </Paper>
   //   </Box>
-  <Box sx={{ padding: 10, maxWidth: 800, margin: 'auto' }}>
-      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+  <Box sx={{ padding: 5, width:650, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
         {sections.map((section, index) => (
           <Step key={section}>
             <CustomStepLabel>
@@ -633,6 +633,10 @@ const ChessQuiz = ({ userName }) => {
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(90px)',
           borderRadius: '16px',
+          width: '100%', // Ensures Paper takes full width of the container
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
         <Typography variant="h5" sx={{ mb: 3, color: 'white' , textAlign: 'center'}}>
@@ -660,6 +664,7 @@ const ChessQuiz = ({ userName }) => {
                       gap: '10px',
                       width: '560px',
                       height: '48px',
+                      marginBottom: '5px', // Increased gap between options
                       borderRadius: '32px',
                       background: answers[`${currentSection}_${index}`] === option ? 'rgba(255, 192, 8, 0.815)' : 'transparent',
                       color: answers[`${currentSection}_${index}`] === option ? 'black' : 'white',

@@ -286,7 +286,7 @@ function Auth() {
                   sx={{
                     mt: 3,
                     mb: 2,
-                    ml: 17,
+                    ml: 15,
                     boxSizing: 'border-box',
                     display: 'flex',
                     // flexDirection: 'row',
@@ -313,7 +313,7 @@ function Auth() {
                   onClick={changeAuthCard}
                   sx={{ mt: 3,
                     mb: 2,
-                    ml: 17,
+                    ml: 15,
                     boxSizing: 'border-box',
                     display: 'flex',
                     // flexDirection: 'row',
@@ -580,7 +580,7 @@ function Auth() {
                     }, 
                   }}
                 >
-                  Sign Up
+                  Register
                 </Button>
                 <Button
                   className="auth-action-button"

@@ -33,15 +33,17 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 function GameDialogBox({ open, Title, Description, isRematch, handelClose, handelRematch, handelAnalyze }) {
   return (
     <Dialog open={open} onClose={handelClose}>
-      <DialogTitle>{Title}</DialogTitle>
+      <DialogTitle sx={{color:'#8E5C00', textAlign:'center'}}>{Title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{Description}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handelClose} color="primary">Close</Button>
-        <Button onClick={handelRematch} color="primary">Rematch</Button>
+        {/* <Button onClick={handelClose} color="primary">Close</Button> */}
+        <Button onClick={handelRematch} variant="contained" sx={{ backgroundColor: ' #8E5C00', color: 'white', fontFamily: 'Open Sans', '&:hover': {
+                        background: '#8E5C00'} }}>Rematch</Button>
         {handelAnalyze && (
-          <Button onClick={handelAnalyze} color="primary">Analyze Game</Button>
+          <Button onClick={handelAnalyze} variant="contained" sx={{ backgroundColor: '#8E5C00', color: 'white', fontFamily: 'Open Sans', '&:hover': {
+            background: ' #8E5C00'} }}>Analyze Game</Button>
         )}
       </DialogActions>
     </Dialog>

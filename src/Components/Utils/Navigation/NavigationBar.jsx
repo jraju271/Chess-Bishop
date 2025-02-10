@@ -71,14 +71,14 @@ function NavigationBar() {
 
       
 
-          {/* <Link to="/famous-games" className="nav-link">
+          <Link to="/famous-games" className="nav-link">
             <Button 
               className={`nav-button ${activeButton === 'legends' ? 'active' : ''}`}
               onClick={() => setActiveButton('legends')}
             >
               Legends
             </Button>
-          </Link> */}
+          </Link>
 
           {/* <Link to="/settings" className="nav-link">
             <Button 

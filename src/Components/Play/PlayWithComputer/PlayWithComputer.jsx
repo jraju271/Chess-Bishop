@@ -1091,7 +1091,7 @@ const PlayWithComputer = () => {
   return (
     <>
       <Box className="PwCBox" >
-        <Box className="PwC_ChessBoardBox" sx={{ width: '100%', maxWidth: '550px'}}>
+        <Box className="PwC_ChessBoardBox" sx={{ width: '550px'}}>
           {/* <Box sx={{ margin: '1%', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
             <Avatar sx={{ backgroundColor: 'var(--PrimaryButtonColor)' }}>C</Avatar>
             <Typography style={{ 'padding': '2%', }}>Mr Chess</Typography>
@@ -1114,7 +1114,7 @@ const PlayWithComputer = () => {
             customArrows={AisupportMove}
             customBoardStyle={{
               borderRadius: "4px",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+              boxShadow: "0 2px 10px rgba(238, 234, 234, 0.5)",
             }}
             customSquareStyles={{
               ...moveSquares,
@@ -1144,7 +1144,7 @@ const PlayWithComputer = () => {
           <Box sx={{ margin: '1%', display: 'flex', justifyContent: 'start', alignItems: 'center', padding: '10px', backgroundColor: 'black', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)' }}>
             <Box sx={{ width: '70%', display: 'flex', justifyContent: 'space-between' }}>
               <Button variant="contained" sx={{ backgroundColor: '#8E5C00', color: 'white', fontFamily: 'Open Sans', '&:hover': {
-                        background: 'rgba(163, 150, 109, 0.5)'}, }} onClick={handleUndo}>Undo</Button>
+                        background: 'rgba(163, 150, 109, 0.5)'} }} onClick={handleUndo}>Undo</Button>
               <Button variant="contained" sx={{ backgroundColor: '#8E5C00', color: 'white', fontFamily: 'Open Sans', '&:hover': {
                         background: 'rgba(163, 150, 109, 0.5)'} }} onClick={handleReset}>Reset</Button>
               <Button variant="contained" sx={{ backgroundColor: '#8E5C00', color: 'white', fontFamily: 'Open Sans', '&:hover': {
@@ -1172,8 +1172,8 @@ const PlayWithComputer = () => {
               <Tab value="Settings" icon={<Settings />} aria-label="Settings" />
             </Tabs>
           </Box> */}
-        <Box className="Pwc_GamePanel" sx={{ backgroundColor: 'black', color: 'white', padding: '10px', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)' }}>
-          <Box className="Pwc_GamePanelHeader">
+        <Box className="Pwc_GamePanel" sx={{ backgroundColor: 'black', width:'280px', height:'96vh', color: 'white', padding: '10px', borderRadius: '0px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)' }}>
+          <Box className="Pwc_GamePanelHeader" sx={{  }}>
             <Tabs
               sx={{ width: '100%' }}
               value={Panelvalue}
@@ -1183,12 +1183,18 @@ const PlayWithComputer = () => {
               aria-label="icon tabs example"
             >
               <Tab value="History" icon={<History sx={{ color: '#8E5C00' }} />} aria-label="History" />
-              <Tab value="Analytics" icon={<Analytics sx={{ color: '#8E5C00' }} />} aria-label="Analytics" />
+              {/* <Tab value="Analytics" icon={<Analytics sx={{ color: '#8E5C00' }} />} aria-label="Analytics" /> */}
               <Tab value="Settings" icon={<Settings sx={{ color: '#8E5C00' }} />} aria-label="Settings" />
             </Tabs>
           </Box>
           {Panelvalue == "History" && <Box sx={{marginTop:'3%', height: '80vh', overflow: 'auto'}}>
             <Grid container rowSpacing={1} columnSpacing={{lg: 15 }}>{/* xs: 1, sm: 2, md: 3*/}
+              {/* Header Row */}
+              <Grid item xs={2}>Move</Grid>
+              <Grid item xs={2}>White </Grid>
+              <Grid item xs={2}>Black </Grid>
+
+              {/* Moves */}
               {HistoryList.map((value, index, array) => (
                 <>
                   {(index + 1) % 2 == 0 ? "" : <Grid item xs={2}>{(index / 2) + 1}</Grid>}
@@ -1200,14 +1206,14 @@ const PlayWithComputer = () => {
             </Grid>            
           </Box>}
 
-          {Panelvalue == "Analytics" && <Box className="Panel">
+          {/* {Panelvalue == "Analytics" && <Box className="Panel">
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
               <Box sx={{ width: '100%', padding: '10%' }}>
                 <Line className='ChartLayout' data={Chartdata}/>
               </Box>
 
             </Grid>
-          </Box>}
+          </Box>} */}
           {Panelvalue == "Settings" && <Box sx={{marginTop:'3%', height: '80vh', overflow: 'auto'}}>
             <Grid container rowSpacing={1} sx={{ justifyContent: 'center' }}> {/*columnSpacing={{ xs: 1, sm: 2, md: 3, lg:20 }}*/}
               <Grid item xs={10}>

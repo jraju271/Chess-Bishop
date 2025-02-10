@@ -561,7 +561,7 @@ const FeedbackDashboard = () => {
         {/* Next Game*/}
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, marginBottom: 3 }}>
           {gamesPlayed < 3 ? (
-            <Button variant="contained" color="primary" onClick={handleRetryGame}>
+            <Button variant="contained" sx={{backgroundColor: "#8E5C00", '&:hover': {background: 'rgba(255, 192, 8, 0.5)'}}} onClick={handleRetryGame}>
               Next Game ({gamesPlayed}/3)
             </Button>
           ) : (
