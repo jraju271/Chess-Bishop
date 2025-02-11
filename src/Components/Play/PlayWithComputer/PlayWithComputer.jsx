@@ -21,6 +21,9 @@ import FeedbackDashboard from './FeedbackDashboard';
 import { useLocation, useNavigate } from 'react-router-dom'; // For navigation to analysis page
 import { average } from 'firebase/firestore'
 
+import { CircularProgress, Backdrop } from '@mui/material';
+
+
 //function PlayWithComputer() {
 const PlayWithComputer = () => {
   const location = useLocation();
@@ -140,6 +143,9 @@ const PlayWithComputer = () => {
   const [evaluation, setEvaluation] = useState(null); // Holds evaluation score
   //const game = useRef(new Chess()); // Chess game instance
   const [gameData, setGameData] = useState(null);   // Define a state to store game data
+
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
 
 
 
@@ -553,9 +559,19 @@ const PlayWithComputer = () => {
   };
 
   async function handleResign() {
+    setIsAnalyzing(true); // Show loading before analysis starts
+
     let result='Resigned';
-    const evaluation= await getEvaluationFromStockfish(game.fen());
-    handleGameEnd(result);//, evaluation);    
+    // const evaluation= await getEvaluationFromStockfish(game.fen());
+    // handleGameEnd(result);//, evaluation);    
+    try {
+      const evaluation = await getEvaluationFromStockfish(game.fen());
+      await handleGameEnd(result);
+    } catch (error) {
+        console.error("Error during resignation analysis:", error);
+    } finally {
+        setIsAnalyzing(false); // Hide loading when done
+    }
   }
 
   function handleGameEnd1(result,evaluation) {
@@ -616,8 +632,29 @@ const PlayWithComputer = () => {
     });
   }
   async function handelAnalyze() { 
+
+    setIsAnalyzing(true); // Show loading state
+
     setDialogOpen(false); // Close the dialog
     // Determine the result based on game state
+
+    // let result = '';
+    // if (game.isCheckmate()) {
+    //     result = game.turn() === 'w' ? 'Black wins' : 'White wins'; // The opponent of the current turn won
+    // } else if (game.isDraw()) {
+    //     result = 'Draw';
+    // } else if (game.isStalemate()) {
+    //     result = 'Stalemate - Draw';
+    // } else if (game.isThreefoldRepetition()) {
+    //     result = 'Threefold Repetition - Draw';
+    // }
+    // // Fetch evaluation score from Stockfish
+    // const evaluation = await getEvaluationFromStockfish(game.fen());
+    // // Pass the result and evaluation to handleGameEnd
+    // handleGameEnd(result);//, evaluation);
+
+    // setIsAnalyzing(false); // Hide loading state
+
     let result = '';
     if (game.isCheckmate()) {
         result = game.turn() === 'w' ? 'Black wins' : 'White wins'; // The opponent of the current turn won
@@ -632,6 +669,7 @@ const PlayWithComputer = () => {
     const evaluation = await getEvaluationFromStockfish(game.fen());
     // Pass the result and evaluation to handleGameEnd
     handleGameEnd(result);//, evaluation);
+
   } 
 
   const difficultyMapping = {
@@ -667,71 +705,76 @@ const PlayWithComputer = () => {
 
   // PlayWithComputer.jsx
   async function handleGameEnd(result) {
-    const gameClone = new Chess(); // Create a new Chess instance for analysis
-    const moveHistory = [];
-    let totalEvaluation = 0; // For calculating the overall score
-    let validEvaluationCount = 0; // Count moves with valid evaluations
-    for (const [index, move] of game.history({ verbose: true }).entries()) {
-      const gameStateBefore = gameClone.fen();
-      console.log("Game state before move:", JSON.stringify(gameClone.fen()));
-      gameClone.move(move); // Apply each move to the clone
-      const gameStateAfter = gameClone.fen();
-      console.log("Game state after move:", JSON.stringify(gameClone.fen()));
-      const fen = gameClone.fen(); // Get FEN from the cloned game
-      console.log(`Move ${index + 1}:`, move.san, "FEN:", fen);
-      const evaluation = await getEvaluationFromStockfish(fen);
-      console.log(`Evaluation for Move ${index + 1}:`, evaluation);
-      
-      if (typeof evaluation === "number") { // Only consider numeric evaluations
-        totalEvaluation += evaluation;
-        validEvaluationCount++;
+    try{
+      const gameClone = new Chess(); // Create a new Chess instance for analysis
+      const moveHistory = [];
+      let totalEvaluation = 0; // For calculating the overall score
+      let validEvaluationCount = 0; // Count moves with valid evaluations
+      for (const [index, move] of game.history({ verbose: true }).entries()) {
+        const gameStateBefore = gameClone.fen();
+        console.log("Game state before move:", JSON.stringify(gameClone.fen()));
+        gameClone.move(move); // Apply each move to the clone
+        const gameStateAfter = gameClone.fen();
+        console.log("Game state after move:", JSON.stringify(gameClone.fen()));
+        const fen = gameClone.fen(); // Get FEN from the cloned game
+        console.log(`Move ${index + 1}:`, move.san, "FEN:", fen);
+        const evaluation = await getEvaluationFromStockfish(fen);
+        console.log(`Evaluation for Move ${index + 1}:`, evaluation);
+        
+        if (typeof evaluation === "number") { // Only consider numeric evaluations
+          totalEvaluation += evaluation;
+          validEvaluationCount++;
+        }
+
+        let moveQuality = "Neutral";
+        let alternativeMoves = [];
+
+        if (evaluation > 1.0) moveQuality = "Good";
+        else if (evaluation < -1.0){
+          moveQuality = "Bad";
+          alternativeMoves = await getAlternativeMoves(fen);      
+        } 
+        const usedTechnique = detectTechnique(move, gameStateBefore, gameStateAfter, "used");
+        const missedTechnique = detectTechnique(move, gameStateBefore, gameStateAfter, "missed");
+        console.log(`Move ${index + 1}:`, move.san);
+        console.log("Used Technique:", usedTechnique, "Missed Technique:", missedTechnique);  
+        
+        // Add move details to history
+        moveHistory.push({
+          moveNumber: index + 1,
+          from: move.from,
+          to: move.to,
+          san: move.san,
+          evaluation,
+          moveQuality,
+          alternativeMoves,
+          usedTechnique,
+          missedTechnique,
+          fen,
+        });
       }
 
-      let moveQuality = "Neutral";
-      let alternativeMoves = [];
+      const overallScore = validEvaluationCount > 0 ? totalEvaluation / validEvaluationCount : 0;
+      let gameCategory = "Average";
+      if (overallScore > 1.0) gameCategory = "Good";
+      else if (overallScore < -1.0) gameCategory = "Poor";
 
-      if (evaluation > 1.0) moveQuality = "Good";
-      else if (evaluation < -1.0){
-        moveQuality = "Bad";
-        alternativeMoves = await getAlternativeMoves(fen);      
-      } 
-      const usedTechnique = detectTechnique(move, gameStateBefore, gameStateAfter, "used");
-      const missedTechnique = detectTechnique(move, gameStateBefore, gameStateAfter, "missed");
-      console.log(`Move ${index + 1}:`, move.san);
-      console.log("Used Technique:", usedTechnique, "Missed Technique:", missedTechnique);  
-      
-      // Add move details to history
-      moveHistory.push({
-        moveNumber: index + 1,
-        from: move.from,
-        to: move.to,
-        san: move.san,
-        evaluation,
-        moveQuality,
-        alternativeMoves,
-        usedTechnique,
-        missedTechnique,
-        fen,
-      });
+      const gameDetails = {
+        moves: moveHistory,
+        finalEvaluation: overallScore,//moveHistory[moveHistory.length - 1]?.evaluation || result,
+        gameCategory,
+        result,
+        timeWhite: timerA,
+        timeBlack: timerB,
+      };
+      // Set game data
+      setGameData(gameDetails);
+      // Navigate to feedback analysis page with game data
+      navigate("/feedback-analysis", { state: { gameData: gameDetails } });
+    } catch (error) {
+      console.error("Error in handleGameEnd:", error);
+      setIsAnalyzing(false); // Hide loading on error
     }
-
-    const overallScore = validEvaluationCount > 0 ? totalEvaluation / validEvaluationCount : 0;
-    let gameCategory = "Average";
-    if (overallScore > 1.0) gameCategory = "Good";
-    else if (overallScore < -1.0) gameCategory = "Poor";
-
-    const gameDetails = {
-      moves: moveHistory,
-      finalEvaluation: overallScore,//moveHistory[moveHistory.length - 1]?.evaluation || result,
-      gameCategory,
-      result,
-      timeWhite: timerA,
-      timeBlack: timerB,
-    };
-    // Set game data
-    setGameData(gameDetails);
-    // Navigate to feedback analysis page with game data
-    navigate("/feedback-analysis", { state: { gameData: gameDetails } });
   }
 
   async function getEvaluationFromStockfish(fen) {
@@ -1089,7 +1132,7 @@ const PlayWithComputer = () => {
 
   //changed ------------------------------------------
   return (
-    <>
+    <div className='chess-game'>
       <Box className="PwCBox" >
         <Box className="PwC_ChessBoardBox" sx={{ width: '550px'}}>
           {/* <Box sx={{ margin: '1%', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
@@ -1244,6 +1287,22 @@ const PlayWithComputer = () => {
         </Box>
         <Toaster />
       </Box>
+      <Backdrop
+        sx={{ 
+          color: '#fff', 
+          zIndex: 9999,
+          flexDirection: 'column',
+          gap: 2
+        }}
+        open={isAnalyzing}
+      >
+        <CircularProgress color="inherit" />
+        <Typography variant="h6">
+          {/* Please wait, the engine is analyzing your game... */}
+          Please wait, analysis page is loading...
+        </Typography>
+      </Backdrop>
+      
       <GameDialogBox
         open={DialogOpen}
         Title={"Game End"}
@@ -1283,8 +1342,10 @@ const PlayWithComputer = () => {
           //navigate('/feedback-analysis', { state: { gameData: gameDetails } });
         }} // New Analyze button handler*/
         handelAnalyze={handelAnalyze} 
+        sx={{ zIndex: 9998 }} // Lower zIndex than Backdrop
       />
-    </>
+      
+    </div>
   );
 }
 

@@ -6,6 +6,8 @@ import { Chess } from 'chess.js';
 import GameReport from './GameReport';
 import { Bar } from 'react-chartjs-2';
 
+import { CircularProgress, Backdrop} from '@mui/material';
+
 const FeedbackDashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,6 +25,8 @@ const FeedbackDashboard = () => {
   const [allGamesData, setAllGamesData] = useState(() => 
     JSON.parse(localStorage.getItem('allGamesData') || '[]')
   );
+
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
     if (moves.length > 0 && moves[currentMoveIndex]?.fen) {
@@ -121,6 +125,7 @@ const FeedbackDashboard = () => {
 };
 
   const analyzeGame = async () => {
+    setIsAnalyzing(true); // Show loading state
     console.log("Starting game analysis...");
     const stockfish = new Worker("../../../../stockfish/stockfish.js");
     const analysis = Array(moves.length).fill(null);
@@ -153,6 +158,9 @@ const FeedbackDashboard = () => {
       console.error("Analysis error:", error);
     } finally {
       stockfish.terminate();
+
+      setIsAnalyzing(false); // Hide loading state
+
     }
   };
 
@@ -569,6 +577,20 @@ const FeedbackDashboard = () => {
           )}
         </Box>
       </Box>
+      <Backdrop
+        sx={{ 
+          color: '#fff', 
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          flexDirection: 'column',
+          gap: 2
+        }}
+        open={isAnalyzing}
+      >
+        <CircularProgress color="inherit" />
+        <Typography variant="h6">
+          Please wait, the engine is analyzing your moves...
+        </Typography>
+      </Backdrop>
     </Box>
   );
 };
