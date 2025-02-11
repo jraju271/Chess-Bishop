@@ -175,8 +175,9 @@ const PerformanceChart = ({ data }) => {
       label: 'Game Performance',
       data: data,
       backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-      borderColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-      borderWidth: 1,
+      // borderColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+      borderColor: ['white', 'white', 'white'], // Changed to white
+      borderWidth: 1.5,
     }]
   };
 
@@ -233,7 +234,7 @@ const PerformanceChart = ({ data }) => {
             text: 'Game Performance',
             fillStyle: 'transparent', // Make the legend box transparent
             strokeStyle: 'white', //#666666 is equivalent to 'gray'
-            // lineWidth: 1,
+            lineWidth: 2,
             fontColor: '#FFFFFF', //#FFFFFF is equivalent to 'white'
             // font: {
             //   color: 'white'

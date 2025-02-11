@@ -65,7 +65,8 @@ function NavigationBar() {
               className={`nav-button ${activeButton === 'learn' ? 'active' : ''}`}
               onClick={() => setActiveButton('learn')}
             >
-              <LocalLibrary sx={{ mr: 1 }} /> Learn
+              <LocalLibrary sx={{ mr: 1 }} /> 
+              Learn
             </Button>
           </Link>
 
@@ -73,7 +74,7 @@ function NavigationBar() {
 
           <Link to="/famous-games" className="nav-link">
             <Button 
-              className={`nav-button ${activeButton === 'legends' ? 'active' : ''}`}
+              className={`nav-button ${activeButton === 'famous-games' ? 'active' : ''}`}
               onClick={() => setActiveButton('legends')}
             >
               Legends
