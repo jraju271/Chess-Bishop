@@ -1132,7 +1132,7 @@ const PlayWithComputer = () => {
 
   //changed ------------------------------------------
   return (
-    <div className='chess-game'>
+    <div className='chess-game' style={{ backgroundColor: 'black', minHeight: '100vh' }}>
       <Box className="PwCBox" >
         <Box className="PwC_ChessBoardBox" sx={{ width: '550px'}}>
           {/* <Box sx={{ margin: '1%', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
@@ -1215,7 +1215,7 @@ const PlayWithComputer = () => {
               <Tab value="Settings" icon={<Settings />} aria-label="Settings" />
             </Tabs>
           </Box> */}
-        <Box className="Pwc_GamePanel" sx={{ backgroundColor: 'black', width:'280px', height:'96vh', color: 'white', padding: '10px', borderRadius: '0px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)' }}>
+        <Box className="Pwc_GamePanel" sx={{ backgroundColor: 'black', width:'290px', height:'96vh', color: 'white', padding: '10px', borderRadius: '0px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)' }}>
           <Box className="Pwc_GamePanelHeader" sx={{  }}>
             <Tabs
               sx={{ width: '100%' }}

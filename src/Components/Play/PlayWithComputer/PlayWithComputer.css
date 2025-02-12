@@ -90,3 +90,15 @@
 .css-5ryogn-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track {
     background-color: var(--PrimaryTextColor) !important;
 }
+
+.chess-game {
+    background-color: black;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+  }
