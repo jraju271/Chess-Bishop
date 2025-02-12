@@ -1,7 +1,7 @@
 .LeanContainer{
     /* position:'fixed',top:'25%',width:'80%',backgroundColor:'red',width:'100vh',height:'100vh'; */
     position: fixed;
-    top: 10%;
+    top: 6%;
     width: 60% !important;
     background-color:var(--PrimaryBoxColor);
     max-width: 100% !important;

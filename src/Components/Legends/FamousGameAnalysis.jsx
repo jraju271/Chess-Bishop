@@ -180,8 +180,8 @@ const ChessGameReview = () => {
   };
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', padding: '50px', background: 'grey', color: '#333', fontFamily: '"Helvetica Neue", Arial, sans-serif', height: '100vh', width: '99vw', boxSizing: 'border-box' }}>
-      <h1 style={{ background: '#333', color: 'white', padding: '10px', textAlign: 'center', fontSize: '1.5em'}}>Well-Known Chess Games Analysis</h1>
+    <div style={{display: 'flex', flexDirection: 'column', padding: '45px', background: 'grey', color: '#333', fontFamily: '"Helvetica Neue", Arial, sans-serif', height: '100vh', width: '99vw', boxSizing: 'border-box' }}>
+      <h1 style={{ background: '#333', color: 'white', padding: '6px', textAlign: 'center', fontSize: '1.5em'}}>Well-Known Chess Games Analysis</h1>
       <div style={{ display: 'flex', flex: 1, gap: '20px', height: 'calc(100% - 60px)' }}>
         <div style={{ flex: '0.8', overflowY: 'auto', border: '1px solid #ddd', padding: '10px', background: '#ffffff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
           <h3 style={{ textAlign: 'center', marginBottom: '10px', fontSize: '19px', color: '#050301' }}>Games</h3>
@@ -224,7 +224,7 @@ const ChessGameReview = () => {
           ))}
         </div>
 
-        <div style={{ flex: '1', padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <div style={{ flex: '1', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
           <div style={{ marginBottom: '10px', fontSize: '19px', fontWeight: 'bold', color: '#333' }}>
             {currentGameDetails}
           </div>
