@@ -71,10 +71,10 @@ function NavigationBar() {
               Play Now
             </Button> */}
 
-            <Link to="/auth" className="nav-link">
+            <Link to="/Auth" className="nav-link">
               <Button 
                 className={`nav-button ${activeButton === 'learn' ? 'active' : ''}`}
-                onClick={() => setActiveButton('auth')}
+                onClick={() => setActiveButton('Auth')}
               >
                 <LocalLibrary sx={{ mr: 1 }} /> 
                 Play Now
