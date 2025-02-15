@@ -71,7 +71,7 @@ function NavigationBar() {
               Play Now
             </Button> */}
 
-            {/* <Link to="/Auth" className="nav-link">
+            <Link to="/Auth" className="nav-link">
               <Button 
                 className={`nav-button ${activeButton === 'learn' ? 'active' : ''}`}
                 onClick={() => setActiveButton('Auth')}
@@ -79,7 +79,7 @@ function NavigationBar() {
                 <LocalLibrary sx={{ mr: 1 }} /> 
                 Play Now
               </Button>
-            </Link> */}
+            </Link>
 
             <Link to="/learn" className="nav-link">
               <Button 
@@ -163,13 +163,13 @@ function NavigationBar() {
               </Button>
             </Link>
 
-            <Button 
+            {/* <Button 
               className={`nav-button side-nav-button ${open ? 'active' : ''}`}
               onClick={handleClickOpen}
             >
               <SmartToy sx={{ mr: 1 }} />
               Play Now
-            </Button>
+            </Button> */}
 
             <Link to="/learn" className="nav-link">
               <Button 
