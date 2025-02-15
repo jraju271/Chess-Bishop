@@ -85,7 +85,7 @@ function ChatBot() {
 
   return (
     <>
-      {isChatOpen && <Container className='ChatBox'>
+      {/* {isChatOpen && <Container className='ChatBox'>
         <Box className='MessageBox' >
           {messages.map((message, index) => (
             <Box key={index} className='MessageText' sx={{ backgroundColor: message.type === 'bot' ? 'var(--SecondaryBackgroud1)' : 'var(--SecondaryBackgroud2)', justifySelf: message.type === 'bot' ? 'left' : 'right' }}>
@@ -110,7 +110,7 @@ function ChatBot() {
         }}>
           <CloseIcon />
         </IconButton>
-      </Container>}
+      </Container>} */}
       <Box id='ChatBotBox'>
         {/* <img src={CurrentState.MemojiState} className='ChatImage' onClick={() => { setisChatOpen(!isChatOpen); dispatch(setMemojiState('Active')); }} /> */}
         <img src={BotAvatar} className='ChatImage' onClick={() => { setisChatOpen(!isChatOpen); dispatch(setMemojiState('Active')); }} />

@@ -39,8 +39,8 @@ function GameDialogBox({ open, Title, Description, isRematch, handelClose, hande
       </DialogContent>
       <DialogActions>
         {/* <Button onClick={handelClose} color="primary">Close</Button> */}
-        <Button onClick={handelRematch} variant="contained" sx={{ backgroundColor: ' #8E5C00', color: 'white', fontFamily: 'Open Sans', '&:hover': {
-                        background: '#8E5C00'} }}>Rematch</Button>
+        {/* <Button onClick={handelRematch} variant="contained" sx={{ backgroundColor: ' #8E5C00', color: 'white', fontFamily: 'Open Sans', '&:hover': {
+                        background: '#8E5C00'} }}>Rematch</Button> */}
         {handelAnalyze && (
           <Button onClick={handelAnalyze} variant="contained" sx={{ backgroundColor: '#8E5C00', color: 'white', fontFamily: 'Open Sans', '&:hover': {
             background: ' #8E5C00'} }}>Analyze Game</Button>

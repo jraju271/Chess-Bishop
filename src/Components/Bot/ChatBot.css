@@ -8,8 +8,10 @@
 }
 
 .ChatImage{
-    width: 100%;
-    height: 100%;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    margin: 25%;
 }
 .ChatBox{
    position: absolute !important;
