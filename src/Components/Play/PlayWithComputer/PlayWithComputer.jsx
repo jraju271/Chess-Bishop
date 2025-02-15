@@ -703,6 +703,118 @@ const PlayWithComputer = () => {
     resetGame(); // Reset game logic here
   };
 
+
+   // Add the analyzeGame function inside PlayWithComputer component
+  const analyzeGame = async (gameDetails) => {
+    setIsAnalyzing(true); // Show loading state
+    console.log("Starting game analysis...");
+    const stockfish = new Worker("/stockfish/stockfish.js", { type: 'classic' });
+    const analysis = Array(gameDetails.moves.length).fill(null);
+
+    try {
+      stockfish.postMessage("uci");
+      stockfish.postMessage("setoption name MultiPV value 3");
+      stockfish.postMessage("setoption name Skill Level value 20");
+      await new Promise(resolve => {
+        stockfish.onmessage = (event) => {
+          if (event.data.includes("uciok")) {
+            console.log("Stockfish initialized");
+            resolve();
+          }
+        };
+      });
+
+      let moveHistory = [];
+      for (let i = 0; i < gameDetails.moves.length; i++) {
+        console.log(`Analyzing move ${i + 1}/${gameDetails.moves.length}`);
+        moveHistory = gameDetails.moves.slice(0, i + 1).map(m => m.san);
+        await analyzeSinglePosition(stockfish, analysis, i, gameDetails.moves[i].fen, moveHistory);
+        console.log(`Analysis for move ${i + 1}:`, analysis[i]);
+      }
+
+      console.log("Final analysis:", analysis);
+      gameDetails.analysisData = analysis; // Add analysis data to gameDetails
+      setAnalysisData(analysis);
+      setAnalyzeButtonClicked(true);
+    } catch (error) {
+      console.error("Analysis error:", error);
+    } finally {
+      stockfish.terminate();
+      setIsAnalyzing(false); // Hide loading state
+    }
+  }; 
+
+
+  // Add the analyzeSinglePosition function inside PlayWithComputer component
+const analyzeSinglePosition = (stockfish, analysis, index, fen, moveHistory) => {
+  return new Promise((resolve) => {
+    let bestLine = null;
+    const chess = new Chess();
+
+    // Reconstruct the position before the current move
+    if (index > 0) {
+      // Apply all moves up to the previous position
+      for (let i = 0; i < index; i++) {
+        chess.move(moveHistory[i]);
+      }
+    }
+
+    const positionBeforeMove = chess.fen();
+    const playerToMove = chess.turn();
+
+    stockfish.onmessage = (event) => {
+      const message = event.data;
+
+      if (message.includes("info") && message.includes("score cp") && !bestLine) {
+        const scoreMatch = message.match(/score cp (-?\d+)/);
+        const depthMatch = message.match(/depth (\d+)/);
+        const pvMatch = message.match(/pv ([a-h][1-8][a-h][1-8][qrbn]?\s*[a-h][1-8][a-h][1-8][qrbn]?)/i);
+
+        if (scoreMatch && depthMatch && pvMatch && depthMatch[1] === "15") {
+          try {
+            const tempChess = new Chess(positionBeforeMove);
+            const moves = pvMatch[1].trim().split(/\s+/);
+            const firstMove = moves[0];
+
+            const from = firstMove.substring(0, 2);
+            const to = firstMove.substring(2, 4);
+            const promotion = firstMove.length > 4 ? firstMove[4] : undefined;
+
+            const moveResult = tempChess.move({
+              from: from,
+              to: to,
+              promotion: promotion
+            }, { sloppy: true });
+
+            if (moveResult && moveResult.san !== moveHistory[index]) {
+              // Only store if it's a different move than what was played
+              bestLine = {
+                evaluation: parseInt(scoreMatch[1]) / 100,
+                bestMove: moveResult.san,
+                uciMove: firstMove,
+                playerToMove: playerToMove
+              };
+            }
+          } catch (err) {
+            console.error('Move conversion error:', err);
+          }
+        }
+      }
+
+      if (message.includes("bestmove")) {
+        if (bestLine) {
+          analysis[index] = bestLine;
+        }
+        resolve();
+      }
+    };
+
+    // Set MultiPV to get multiple lines of analysis
+    stockfish.postMessage("setoption name MultiPV value 3");
+    stockfish.postMessage("position fen " + positionBeforeMove);
+    stockfish.postMessage("go depth 15");
+  });
+  };
   // PlayWithComputer.jsx
   async function handleGameEnd(result) {
     try{
@@ -712,32 +824,32 @@ const PlayWithComputer = () => {
       let validEvaluationCount = 0; // Count moves with valid evaluations
       for (const [index, move] of game.history({ verbose: true }).entries()) {
         const gameStateBefore = gameClone.fen();
-        console.log("Game state before move:", JSON.stringify(gameClone.fen()));
+        //console.log("Game state before move:", JSON.stringify(gameClone.fen()));
         gameClone.move(move); // Apply each move to the clone
         const gameStateAfter = gameClone.fen();
-        console.log("Game state after move:", JSON.stringify(gameClone.fen()));
+        //console.log("Game state after move:", JSON.stringify(gameClone.fen()));
         const fen = gameClone.fen(); // Get FEN from the cloned game
-        console.log(`Move ${index + 1}:`, move.san, "FEN:", fen);
+        //console.log(`Move ${index + 1}:`, move.san, "FEN:", fen);
         const evaluation = await getEvaluationFromStockfish(fen);
-        console.log(`Evaluation for Move ${index + 1}:`, evaluation);
+        //console.log(`Evaluation for Move ${index + 1}:`, evaluation);
         
         if (typeof evaluation === "number") { // Only consider numeric evaluations
           totalEvaluation += evaluation;
           validEvaluationCount++;
         }
 
-        let moveQuality = "Neutral";
-        let alternativeMoves = [];
+        // let moveQuality = "Neutral";
+        // let alternativeMoves = [];
 
-        if (evaluation > 1.0) moveQuality = "Good";
-        else if (evaluation < -1.0){
-          moveQuality = "Bad";
-          alternativeMoves = await getAlternativeMoves(fen);      
-        } 
-        const usedTechnique = detectTechnique(move, gameStateBefore, gameStateAfter, "used");
-        const missedTechnique = detectTechnique(move, gameStateBefore, gameStateAfter, "missed");
-        console.log(`Move ${index + 1}:`, move.san);
-        console.log("Used Technique:", usedTechnique, "Missed Technique:", missedTechnique);  
+        // if (evaluation > 1.0) moveQuality = "Good";
+        // else if (evaluation < -1.0){
+        //   moveQuality = "Bad";
+        //   alternativeMoves = await getAlternativeMoves(fen);      
+        // } 
+        //const usedTechnique = detectTechnique(move, gameStateBefore, gameStateAfter, "used");
+        //const missedTechnique = detectTechnique(move, gameStateBefore, gameStateAfter, "missed");
+        // console.log(`Move ${index + 1}:`, move.san);
+        // console.log("Used Technique:", usedTechnique, "Missed Technique:", missedTechnique);  
         
         // Add move details to history
         moveHistory.push({
@@ -746,10 +858,10 @@ const PlayWithComputer = () => {
           to: move.to,
           san: move.san,
           evaluation,
-          moveQuality,
-          alternativeMoves,
-          usedTechnique,
-          missedTechnique,
+          //moveQuality,
+          //alternativeMoves,
+          //usedTechnique,
+          //missedTechnique,
           fen,
         });
       }
@@ -767,6 +879,8 @@ const PlayWithComputer = () => {
         timeWhite: timerA,
         timeBlack: timerB,
       };
+      // Perform analysis
+      await analyzeGame(gameDetails);
       // Set game data
       setGameData(gameDetails);
       // Navigate to feedback analysis page with game data

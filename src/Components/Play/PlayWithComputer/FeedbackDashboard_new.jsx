@@ -28,6 +28,14 @@ const FeedbackDashboard = () => {
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+  // Add the following useEffect to handle analysis data passed from PlayWithComputer
+  useEffect(() => {
+    if (gameData.analysisData) {
+      setAnalysisData(gameData.analysisData);
+      setAnalyzeButtonClicked(true);
+    }
+  }, [gameData]);
+
   useEffect(() => {
     if (moves.length > 0 && moves[currentMoveIndex]?.fen) {
       setSelectedFen(moves[currentMoveIndex].fen);
@@ -122,7 +130,7 @@ const FeedbackDashboard = () => {
         stockfish.postMessage("position fen " + positionBeforeMove);
         stockfish.postMessage("go depth 15");
     });
-};
+  };
 
   const analyzeGame = async () => {
     setIsAnalyzing(true); // Show loading state
@@ -446,14 +454,14 @@ const FeedbackDashboard = () => {
         //color: "white",
         backgroundColor: "#333"
       }}>
-        <Button 
+        {/* <Button 
           variant="contained" 
           color="primary" 
           onClick={analyzeGame}
           sx={{ mb: 2 , backgroundColor: "#8E5C00", '&:hover': {background: 'rgba(255, 192, 8, 0.5)'}}}
         >
           Analyze Game
-        </Button>
+        </Button> */}
 
         {/* Move history table */}
         <TableContainer component={Paper} sx={{ mb: 1 , backgroundColor: "#333"}}>
