@@ -1388,14 +1388,15 @@ const analyzeSinglePosition = (stockfish, analysis, index, fen, moveHistory) => 
                   className='SliderDepth'
                 />
               </Grid>
-              <Grid item > {/*xs={10}*/}
+              {/* <Grid item > 
+                {xs={10}}
                 <Typography variant="h6" component="h2" textAlign={'center'}>Ai-Support</Typography>
                 <Switch
                   checked={AiSupport}
                   onChange={handleAisupport}
                   inputProps={{ 'aria-label': 'controlled' }}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>}
         </Box>

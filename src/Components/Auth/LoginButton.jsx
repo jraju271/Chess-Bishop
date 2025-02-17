@@ -32,9 +32,9 @@ function LoginButton() {
         </Button>
       ) : (
         <Link to="/Auth" style={{ textDecoration: 'none' }}>
-          <Button variant="contained">
+          {/* <Button variant="contained">
             Login / Sign Up
-          </Button>
+          </Button> */}
         </Link>
       )}
     </Box>
