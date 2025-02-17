@@ -1,3 +1,12 @@
+[build]
+  functions = "netlify/functions"
+  publish = "dist"  # This should be the directory where your build output is located
+
+[[redirects]]
+  from = "/api/sendEmailText"
+  to = "/.netlify/functions/sendEmailText"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
