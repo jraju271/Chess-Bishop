@@ -127,7 +127,7 @@ export async function handler(event, context) {
     //to: toEmail,
     to: recipients,
     //subject: `Chess Performance Report - ${new Date().toLocaleString('en-IN')}`,
-    subject = `Chess Performance Report - ${dateIndia}`,
+    subject : `Chess Performance Report - ${dateIndia}`,
     text: emailBody,
   };
 
