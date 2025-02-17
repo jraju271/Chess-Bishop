@@ -125,7 +125,7 @@ export async function handler(event, context) {
     from: process.env.Mail_User,
     //to: toEmail,
     to: recipients,
-    subject: `Chess Performance Report - ${new Date().toUTCString()}`,
+    subject: `Chess Performance Report - ${new Date().toLocaleTimeString()}`,
     text: emailBody,
   };
 
