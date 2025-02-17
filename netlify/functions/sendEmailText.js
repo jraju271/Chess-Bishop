@@ -120,12 +120,14 @@ export async function handler(event, context) {
       pass: process.env.Mail_Password,
     },
   });
-
+  const options = { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const dateIndia = new Date().toLocaleString('en-IN', options);
   const mailOptions = {
     from: process.env.Mail_User,
     //to: toEmail,
     to: recipients,
-    subject: `Chess Performance Report - ${new Date().toLocaleString('en-IN')}`,
+    //subject: `Chess Performance Report - ${new Date().toLocaleString('en-IN')}`,
+    subject = `Chess Performance Report - ${dateIndia}`,
     text: emailBody,
   };
 
