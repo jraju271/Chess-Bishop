@@ -407,7 +407,7 @@ const FeedbackDashboard = () => {
         //name: localStorage.getItem('UserName') || 'Player',
         name: (currentUser && currentUser.displayName) || localStorage.getItem('UserName') || 'Player',
         quizScore: localStorage.getItem('quizScore'),
-        username: (currentUser && currentUser.UserName) || localStorage.getItem("UserName") || playerData.name || "Player",
+        username: (currentUser && currentUser.UserName) || localStorage.getItem("UserName") || "Player",
         category: localStorage.getItem('playerCategory')
       };
 
