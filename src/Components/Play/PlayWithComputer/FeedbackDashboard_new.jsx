@@ -8,6 +8,10 @@ import { Bar } from 'react-chartjs-2';
 
 import { CircularProgress, Backdrop} from '@mui/material';
 
+//import firebase from "firebase/app"; // make sure firebase is initialized
+//import "firebase/auth";
+import { auth } from '../../../Middleware/Firebase/firebase';
+
 const FeedbackDashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -54,6 +58,16 @@ const FeedbackDashboard = () => {
       localStorage.setItem('gamesPlayed', newGamesPlayed.toString());
     }
   }, [gameData]);
+
+  //Listen for auth state changes
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+    return unsubscribe;
+  }, []);
+
 
   // Handlers for button actions
   const handleRetryGame = () => {
@@ -390,7 +404,8 @@ const FeedbackDashboard = () => {
     if (gamesPlayed >= 3) {
       const gamesAnalysis = JSON.parse(localStorage.getItem('gamesAnalysis') || '[]');
       const playerData = {
-        name: localStorage.getItem('userName') || 'Player',
+        //name: localStorage.getItem('UserName') || 'Player',
+        name: (currentUser && currentUser.displayName) || localStorage.getItem('UserName') || 'Player',
         quizScore: localStorage.getItem('quizScore'),
         category: localStorage.getItem('playerCategory')
       };

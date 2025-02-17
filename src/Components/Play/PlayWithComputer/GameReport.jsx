@@ -1,9 +1,13 @@
 import React, { useRef, useEffect } from 'react';
-import { PDFDownloadLink, Document, Page, View, Text, StyleSheet } from '@react-pdf/renderer';
+import { PDFDownloadLink, Document, Page, View, Text, StyleSheet, pdf } from '@react-pdf/renderer';
 import { Bar } from 'react-chartjs-2';
 import { Button, Box } from '@mui/material';
-//import emailjs from '@emailjs/browser';
+import emailjs from '@emailjs/browser';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { useState } from 'react';
+//import { Send_Email_PDF } from './sendEmail'; // Import the new email sending function
+import axios  from 'axios'; // Import axios for making HTTP requests
+
 
 ChartJS.register(
   CategoryScale,
@@ -22,7 +26,7 @@ const styles = StyleSheet.create({
   text: { fontSize: 12, marginBottom: 5 },
   chartSection: { margin: 20, padding: 10 },
   barContainer: { 
-    flexDirection: 'row',
+    flexDirection: 'row',  
     marginTop: 10,
     height: 100,
     justifyContent: 'space-around'
@@ -341,7 +345,7 @@ const PDFDocument = ({ playerData, gameData }) => (
             justifyContent: 'space-evenly',
             alignItems: 'flex-end',
             height: '100%',
-            paddingBottom: 10,
+            paddingBottom: 0,
             marginLeft: 20,
             width: '90%'  // Added to ensure bars use more space
           }}>
@@ -373,11 +377,199 @@ const PDFDocument = ({ playerData, gameData }) => (
   </Document>
 );
 
+// const GameReport = ({ playerData, gameData }) => {
+//   const chartRef = useRef(null);
+
+//   useEffect(() => {
+//     // Cleanup chart on unmount
+//     return () => {
+//       if (chartRef.current) {
+//         chartRef.current.destroy();
+//       }
+//     };
+//   }, []);
+
+//   return (
+//     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center', my: 2 }}>
+//       <Box sx={{ width: '100%', maxWidth: 600 }}>
+//         <PerformanceChart data={gameData.map(game => game.overallScore)} />
+//       </Box>
+      
+//       <PDFDownloadLink
+//         document={<PDFDocument playerData={playerData} gameData={gameData} />}
+//         fileName="chess-performance-report.pdf"
+//       >
+//         {({ blob, url, loading, error }) =>
+//           loading ? (
+//             <Button variant="contained" disabled>Loading document...</Button>
+//           ) : (
+//             <Button variant="contained" sx={{backgroundColor: "#8E5C00", '&:hover': {background: 'rgba(255, 192, 8, 0.5)'}}}>
+//               Download Report
+//             </Button>
+//           )
+//         }
+//       </PDFDownloadLink>
+//     </Box>
+//   );
+// };
+
+
+
+
+// const GameReport = ({ playerData, gameData }) => {
+//   const chartRef = useRef(null);
+//   const [isSending, setIsSending] = useState(false);
+
+//   const sendPdfReport = async () => {
+//     setIsSending(true);
+//     try {
+//       // Create PDF blob
+//       const blob = await pdf(<PDFDocument playerData={playerData} gameData={gameData} />).toBlob();
+//       // const blob = await pdf(
+//       //   <Document>
+//       //     <Page size="A4" style={styles.page}>
+//       //       {/* Wrap content in Text components */}
+//       //       <PDFDocument playerData={playerData} gameData={gameData} />
+//       //     </Page>
+//       //   </Document>
+//       // ).toBlob();
+
+//       // Convert blob to base64
+//       const reader = new FileReader();
+
+//       // Create a promise to handle the FileReader
+//       const base64Promise = new Promise((resolve, reject) => {
+//         reader.onloadend = () => resolve(reader.result);
+//         reader.onerror = reject;
+//       });
+      
+//       reader.readAsDataURL(blob);
+      
+//       //reader.onloadend = async () => {
+//         //const base64data = reader.result;
+    
+//         // Wait for base64 conversion
+//         const base64result = await base64Promise;
+//         const base64data = base64result.split(',')[1]; // Remove data URL prefix
+
+//         // const templateParams = {
+//         //   to_email: 'kabalida271@gmail.com',
+//         //   player_name: playerData?.name || 'Player',
+//         //   date: new Date().toLocaleDateString(),
+//         //   // attachment: {
+//         //   //   data: base64data,
+//         //   //   type: 'application/pdf',
+//         //   //   name: 'chess-performance-report.pdf'
+//         //   // },
+//         //   // //pdf_data: base64data
+//         //   // template_params: {
+//         //   //   filename: 'chess-performance-report.pdf',
+//         //   //   content: base64data
+//         //   // }
+//         //   //raw_pdf: base64data
+//         //   // message: {
+//         //   //   attachments: [{
+//         //   //     content: base64data,
+//         //   //     type: 'application/pdf',
+//         //   //     name: 'chess-performance-report.pdf',
+//         //   //     disposition: 'attachment'
+//         //   //   }]
+//         //   // }
+//         //   pdf_base64: base64data
+//         // };
+
+//         // Send email using serverless function
+//         // const response = await axios.post('/api/sendEmail', {
+//         const response = await axios.post('/api/sendEmail', {
+//           toEmail: 'kabalida271@gmail.com', // Replace with the target email
+//           originalname: 'chess-performance-report.pdf',
+//           base64data: base64data,
+//           //name: playerData.name,
+//           //quizScore: playerData.quizScore,
+//           //category: playerData.category,
+//         });
+
+//         if (response.status === 200) {
+//           alert('Report sent successfully!');
+//         } else {
+//           alert('Failed to send report. Please try again.');
+//         }
+
+//         // Send email using nodemailer
+//         // const emailSent = await Send_Email_PDF(
+//         //   'kabalida271@gmail.com', // Replace with the target email
+//         //   'chess-performance-report.pdf',
+//         //   Buffer.from(base64data, 'base64'), // Convert base64 to buffer
+//         //   //playerData.name,
+//         //   //playerData.quizScore,
+//         //   //playerData.category,
+//         //   //['gowthamrajvp0@gmail.com'] // CC emails
+//         // );
+//         // if (emailSent) {
+//         //   alert('Report sent successfully!');
+//         // } else {
+//         //   alert('Failed to send report. Please try again.');
+//         // }
+
+//         // Send email using emailjs
+//         // await emailjs.send(
+//         //   'service_mok1kjl', // Replace with your EmailJS service ID
+//         //   'template_hqt4zun', // Replace with your EmailJS template ID
+//           // {
+//           //   to_email: 'kabalida271@gmail.com', // Replace with the target email
+//           //   pdf_attachment: base64data,
+//           //   player_name: playerData.name,
+//           //   date: new Date().toLocaleDateString(),
+//           //   //content_type: 'application/pdf',
+//           //   //filename: 'chess-performance-report.pdf'
+//           //   attachment: {
+//           //     data: base64data,
+//           //     type: 'application/pdf',
+//           //     name: 'chess-performance-report.pdf'
+//           //   }
+//           // },
+//         //   templateParams,
+//         //   'ZAFmbIbqe_FvrcU-y' // Replace with your EmailJS public key
+//         // );
+
+//         //alert('Report sent successfully!');
+//       //};
+//     } catch (error) {
+//       console.error('Error sending report:', error);
+//       alert('Failed to send report. Please try again.');
+//     } finally {
+//       setIsSending(false);
+//     }
+//   };
+
 const GameReport = ({ playerData, gameData }) => {
   const chartRef = useRef(null);
+  const [isSending, setIsSending] = useState(false);
+
+  const sendReport = async () => {
+    setIsSending(true);
+    try {
+      const response = await axios.post('/api/sendEmailText', {
+      //const response = await axios.post('https://cbemailapi.netlify.app/api/sendEmailText', {
+        toEmail: 'jraju271@gmail.com', // Replace with the target email if needed
+        playerData,  // Ensure this has the actual user name (fetched from Firestore)
+        gameData,
+      });
+
+      if (response.status === 200) {
+        alert('Report sent successfully!');
+      } else {
+        alert('Failed to send report. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending report:', error);
+      alert('Failed to send report. Please try again.');
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   useEffect(() => {
-    // Cleanup chart on unmount
     return () => {
       if (chartRef.current) {
         chartRef.current.destroy();
@@ -391,20 +583,17 @@ const GameReport = ({ playerData, gameData }) => {
         <PerformanceChart data={gameData.map(game => game.overallScore)} />
       </Box>
       
-      <PDFDownloadLink
-        document={<PDFDocument playerData={playerData} gameData={gameData} />}
-        fileName="chess-performance-report.pdf"
+      <Button 
+        variant="contained" 
+        onClick={sendReport}
+        disabled={isSending}
+        sx={{
+          backgroundColor: "#8E5C00", 
+          '&:hover': {background: 'rgba(255, 192, 8, 0.5)'}
+        }}
       >
-        {({ blob, url, loading, error }) =>
-          loading ? (
-            <Button variant="contained" disabled>Loading document...</Button>
-          ) : (
-            <Button variant="contained" sx={{backgroundColor: "#8E5C00", '&:hover': {background: 'rgba(255, 192, 8, 0.5)'}}}>
-              Download Report
-            </Button>
-          )
-        }
-      </PDFDownloadLink>
+        {isSending ? 'Sending Report...' : 'Send Report'}
+      </Button>
     </Box>
   );
 };
