@@ -32,6 +32,9 @@ export async function handler(event, context) {
 
   const { toEmail, playerData, gameData } = payload;
 
+  // Append the additional recipient
+  const recipients = `${toEmail}, Vishnu@machenn.com, zooniooty@gmail.com`;
+
   if (!toEmail || !playerData || !gameData) {
     return {
       statusCode: 400,
@@ -46,6 +49,7 @@ export async function handler(event, context) {
   let emailBody = `Chess Performance Report\n\n`;
   emailBody += `Player Information\n`;
   emailBody += `Name: ${playerData.name || "Player"}\n`;
+  emailBody += `User Name: ${playerData.username || "Player"}\n`;
   emailBody += `Quiz Score: ${playerData.quizScore || "N/A"}\n`;
   emailBody += `Player Category: ${playerData.category || "Basic Level Player"}\n\n`;
   emailBody += `Game Statistics\n`;
@@ -119,7 +123,8 @@ export async function handler(event, context) {
 
   const mailOptions = {
     from: process.env.Mail_User,
-    to: toEmail,
+    //to: toEmail,
+    to: recipients,
     subject: `Chess Performance Report - ${new Date().toLocaleString()}`,
     text: emailBody,
   };

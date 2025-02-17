@@ -93,6 +93,7 @@ function Auth() {
       // Update Firebase user's displayName with the provided name (or username)
       await user.updateProfile({
         displayName: name, // or username if preferred
+        UserName: username,
       });
 
       FB_SignUp(user.uid, { uid: user.uid, UserName: username, Name: name, Email: email, Country: country, FIDE: fideRating, Age: age, ProfileImage: selectedImage });
