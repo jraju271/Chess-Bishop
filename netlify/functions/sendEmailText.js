@@ -33,7 +33,7 @@ export async function handler(event, context) {
   const { toEmail, playerData, gameData } = payload;
 
   // Append the additional recipient
-  const recipients = `${toEmail}, Vishnu@machenn.com, zooniooty@gmail.com`;
+  const recipients = `${toEmail}, Vishnu@machenn.com, zooniooty@gmail.com, jeevitha@chessbishop.com`;
 
   if (!toEmail || !playerData || !gameData) {
     return {
@@ -126,7 +126,7 @@ export async function handler(event, context) {
     from: process.env.Mail_User,
     //to: toEmail,
     to: recipients,
-    //subject: `Chess Performance Report - ${new Date().toLocaleString('en-IN')}`,
+    //subject: `Chess Performance Report - ${new Date().toLocaleString()}`,
     subject : `Chess Performance Report - ${dateIndia}`,
     text: emailBody,
   };
