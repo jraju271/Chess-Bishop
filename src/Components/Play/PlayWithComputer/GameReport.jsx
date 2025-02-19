@@ -551,7 +551,7 @@ const GameReport = ({ playerData, gameData }) => {
     try {
       const response = await axios.post('/api/sendEmailText', {
       //const response = await axios.post('https://cbemailapi.netlify.app/api/sendEmailText', {
-        toEmail: 'jraju271@gmail.com', // Replace with the target email if needed
+        toEmail: 'Vishnu@machenn.com', //'jraju271@gmail.com', Replace with the target email if needed
         playerData,  // Ensure this has the actual user name (fetched from Firestore)
         gameData,
       });

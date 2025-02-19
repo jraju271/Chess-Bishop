@@ -33,7 +33,7 @@ export async function handler(event, context) {
   const { toEmail, playerData, gameData } = payload;
 
   // Append the additional recipient
-  const recipients = `${toEmail}, Vishnu@machenn.com, zooniooty@gmail.com, jeevitha@chessbishop.com`;
+  const recipients = `${toEmail}, zooniooty@gmail.com, jeevitha@chessbishop.com`;
 
   if (!toEmail || !playerData || !gameData) {
     return {
