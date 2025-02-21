@@ -836,6 +836,7 @@ const analyzeSinglePosition = (stockfish, analysis, index, fen, moveHistory) => 
         if (typeof evaluation === "number") { // Only consider numeric evaluations
           totalEvaluation += evaluation;
           validEvaluationCount++;
+          
         }
 
         // let moveQuality = "Neutral";
