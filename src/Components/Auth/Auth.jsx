@@ -170,6 +170,21 @@ function Auth() {
     }
   };
 
+  const handleForgotPassword = async () => {
+    // Ensure an email is provided. You can use the SignInemail field.
+    if (!SignInemail) {
+      toast.error("Please enter your email address.");
+      return;
+    }
+    try {
+      await auth.sendPasswordResetEmail(SignInemail);
+      toast.success("Password reset email sent! Please check your inbox.");
+    } catch (error) {
+      console.error("Error in sending password reset email:", error.message);
+      toast.error("Error: " + error.message);
+    }
+  };
+
   return (
     <Box className="auth-container">
       <Box className="auth-background">
@@ -282,7 +297,18 @@ function Auth() {
                       fontFamily: 'Open Sans',
                     }}
                   />
-                  <Link href="#" variant="body2" sx={{ color: '#FAE163', fontFamily: 'Open Sans' }}>
+                  {/* <Link href="#" variant="body2" sx={{ color: '#FAE163', fontFamily: 'Open Sans' }}>
+                    Forgot Password?
+                  </Link> */}
+                  <Link 
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleForgotPassword();
+                    }}
+                    variant="body2" 
+                    sx={{ color: '#FAE163', fontFamily: 'Open Sans' }}
+                  >
                     Forgot Password?
                   </Link>
                 </Box>
