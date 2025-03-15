@@ -36,6 +36,10 @@ function Auth() {
   const webcamRef = useRef(null);
   const [capturedImage, setCapturedImage] = useState(null);
 
+  const [schoolName, setSchoolName] = useState('');
+  const [schoolDistrict, setSchoolDistrict] = useState('');
+
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -74,6 +78,15 @@ function Auth() {
     } catch (error) {
       console.error('Error signing in:', error.message);
       toast.error('Invalid email or password...');
+      // //console.error('Error signing in:', error);
+      // console.log("Error code:", error.code);
+      // if (error.code === 'auth/invalid-credential') {
+      //   toast.error('Email id not registered.');
+      // } else if (error.code === 'auth/wrong-password') {
+      //   toast.error('Invalid email or password...');
+      // } else {
+      //   toast.error('Invalid email or password...');
+      // }
     }
   };
 
@@ -97,7 +110,8 @@ function Auth() {
       });
       localStorage.setItem('UserName', username);
       
-      FB_SignUp(user.uid, { uid: user.uid, UserName: username, Name: name, Email: email, Country: country, FIDE: fideRating, Age: age, ProfileImage: selectedImage });
+      FB_SignUp(user.uid, { uid: user.uid, UserName: username, Name: name, Email: email, Country: country, FIDE: fideRating, Age: age, ProfileImage: selectedImage, SchoolName: schoolName,
+        SchoolDistrict: schoolDistrict});
       setisauthcard(true);
       toast.success('Verification email sent to your mail');
       await user.sendEmailVerification();
@@ -514,6 +528,70 @@ function Auth() {
                   searchable
                 />
                 </Box>
+
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="schoolName"
+                  label="School Name"
+                  name="schoolName"
+                  value={schoolName}
+                  onChange={(e) => setSchoolName(e.target.value)}
+                  InputProps={{
+                    style: { fontFamily: 'Open Sans', color: 'white', backdropFilter: 'blur(25px)', WebkitBackdropFilter: 'blur(25px)', border: '1px solid white'},
+                  }}
+                  InputLabelProps={{
+                    style: { fontFamily: 'Open Sans', color: 'white', backdropFilter: 'blur(25px)', WebkitBackdropFilter: 'blur(25px)'},
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'white',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: 'white',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: 'white',
+                      },
+                      fontSize: '12px',
+                      width: '520px',
+                    },
+                  }}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="schoolDistrict"
+                  label="School District"
+                  name="schoolDistrict"
+                  value={schoolDistrict}
+                  onChange={(e) => setSchoolDistrict(e.target.value)}
+                  InputProps={{
+                    style: { fontFamily: 'Open Sans', color: 'white', backdropFilter: 'blur(25px)', WebkitBackdropFilter: 'blur(25px)', border: '1px solid white'},
+                  }}
+                  InputLabelProps={{
+                    style: { fontFamily: 'Open Sans', color: 'white', backdropFilter: 'blur(25px)', WebkitBackdropFilter: 'blur(25px)'},
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'white',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: 'white',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: 'white',
+                      },
+                      fontSize: '12px',
+                      width: '520px',
+                    },
+                  }}
+                />
+
                 <TextField
                   margin="normal"
                   required
