@@ -45,9 +45,10 @@ import FeedbackDashboard from './Components/Play/PlayWithComputer/FeedbackDashbo
 import ChessTechniques from "./Components/Puzzle/ChessTechniques";
 import GameStrategies from "./Components/Puzzle/GameStrategies";
 import AdvancedCheckmates from './Components/Puzzle/AdvancedCheckmates.jsx'
-import ChessQuiz from './Components/Quiz/ChessQuiz.jsx'
+// import ChessQuiz from './Components/Quiz/ChessQuiz.jsx'
 import ChessGameReview from './Components/Legends/FamousGameAnalysis.jsx'
 
+// import LearnPage from './Components/Learn/LearnPage.jsx'
 
 function App() {
 
@@ -99,8 +100,9 @@ function App() {
               <Route path="/chess-techniques" element={<ChessTechniques />} />
               <Route path="/game-strategies" element={<GameStrategies />} />
               <Route path="/advanced-checkmates" element={<AdvancedCheckmates />} />
-              <Route path="/chess-quiz" element={<ChessQuiz />} />
+              {/* <Route path="/chess-quiz" element={<ChessQuiz />} /> */}
               <Route path="/famous-games" element={<ChessGameReview />} />
+              {/* <Route path="/LearnPage" element={<LearnPage />} /> */}
             </Routes> 
           </ErrorBoundary>
         </Box>
