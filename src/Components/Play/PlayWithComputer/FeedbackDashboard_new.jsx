@@ -12,6 +12,9 @@ import { CircularProgress, Backdrop} from '@mui/material';
 //import "firebase/auth";
 import { auth } from '../../../Middleware/Firebase/firebase';
 
+import PuzzleRecommendations from './PuzzleRecommendation';
+
+
 const FeedbackDashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -31,6 +34,9 @@ const FeedbackDashboard = () => {
   );
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Add this with your other useState declarations (around line 25-30)
+  const [extractedMistakes, setExtractedMistakes] = useState([]);
 
   // Add the following useEffect to handle analysis data passed from PlayWithComputer
   useEffect(() => {
@@ -444,6 +450,49 @@ const FeedbackDashboard = () => {
     return null;
   };
 
+  // Add this useEffect after your other useEffect hooks
+  useEffect(() => {
+    if (analyzeButtonClicked && analysisData.length > 0) {
+      const mistakes = extractMistakes();
+      setExtractedMistakes(mistakes);
+      console.log("Extracted mistakes:", mistakes);
+    }
+  }, [analyzeButtonClicked, analysisData]);
+
+  // Add this method to your existing component
+  const extractMistakes = () => {
+    const mistakes = [];
+    moves.forEach((move, index) => {
+      const analysis = analysisData[index];
+      if (!analysis) return;
+
+      const evalDiff = Math.abs((move.evaluation || 0) - (analysis.evaluation || 0));
+      
+      let mistakeType = null;
+      if (evalDiff > 2) mistakeType = 'blunder';
+      else if (evalDiff > 1) mistakeType = 'mistake';
+      else if (evalDiff > 0.3) mistakeType = 'inaccuracy';
+
+      if (mistakeType) {
+        mistakes.push({
+          type: mistakeType,
+          move: move.san,
+          evaluation: {
+            before: move.evaluation,
+            after: analysis.evaluation
+          }
+        });
+      }
+    });
+
+    return mistakes;
+  };
+
+  // In your render method or useEffect
+  //const mistakes = extractMistakes();
+
+
+
   return (
     <Box sx={{ display: "flex", height: "100vh", padding: 10 }}>
       {/* Chessboard section */}
@@ -465,7 +514,7 @@ const FeedbackDashboard = () => {
         marginLeft: 2, 
         display: "flex", 
         flexDirection: "column", 
-        height: "100vh",
+        height: "140vh",
         overflowY: "auto",
         //color: "white",
         backgroundColor: "#333"
@@ -588,9 +637,11 @@ const FeedbackDashboard = () => {
               <br></br>
               Overall Game Score: {(parseFloat(finalEvaluation) * 100).toFixed(2)}
             </Typography>
+            <PuzzleRecommendations mistakes={extractedMistakes} />
           </Paper>
           )}
         {/* Next Game*/}
+        {/* <PuzzleRecommendations mistakes={extractedMistakes} /> */}
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, marginBottom: 3 }}>
           {gamesPlayed < 3 ? (
             <Button variant="contained" sx={{backgroundColor: "#8E5C00", '&:hover': {background: 'rgba(255, 192, 8, 0.5)'}}} onClick={handleRetryGame}>

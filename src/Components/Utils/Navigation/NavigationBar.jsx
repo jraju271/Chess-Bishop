@@ -81,7 +81,8 @@ function NavigationBar() {
               </Button>
             </Link>
 
-            <Link to="/learn" className="nav-link">
+            {/* <Link to="/learn" className="nav-link"> */}
+            <Link to="/LearnPage" className="nav-link">
               <Button 
                 className={`nav-button ${activeButton === 'learn' ? 'active' : ''}`}
                 onClick={() => setActiveButton('learn')}
