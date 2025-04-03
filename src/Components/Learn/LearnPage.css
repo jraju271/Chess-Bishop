@@ -1,0 +1,343 @@
+/* Wrapper: fills viewport and hides overflow */
+.learn-page-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #262626;
+  overflow: hidden;
+}
+
+/* NavBar for Category Selection */
+.learn-navbar {
+  position: fixed;
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 50px;
+  background: #1F1F1F;
+  box-shadow: inset -8px -8px 12px rgba(0,0,0,0.1), 
+              inset 4px 4px 8px rgba(0,0,0,0.75), 
+              inset 8px 8px 12px rgba(0,0,0,0.25);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+
+.nav-item {
+  color: #808080;
+  font-size: 20px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  /* background: linear-gradient(182.89deg, rgba(142, 92, 0, 0) 2.29%, #8E5C00 97.5%), #FFC008; */
+  /* border-radius: 4px; */
+}
+
+.nav-item.active-category {
+  background: linear-gradient(182.89deg, rgba(142, 92, 0, 0) 2.29%, #8E5C00 97.5%), #FFC008;
+  /* border-width: 0%; */
+  /* border-radius: 20px; */
+  color: #000;
+  font-size: 22px;
+  font-weight: bold;
+  padding: 5px 24px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Main Learn Page Container (Frame 8508) */
+/* .frame8508 {
+  position: absolute;
+  width: 1552px;
+  height: 750px;
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1F1F1F;
+  box-shadow: -8px -8px 12px rgba(0,0,0,0.1),
+              4px 4px 8px rgba(0,0,0,0.75),
+              8px 8px 12px rgba(0,0,0,0.25);
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif;
+} */
+.frame8508 {
+  position: relative;
+  /* width: 0%; */
+  /* height: 30%; */
+  left: 20px;
+  top: 75px;
+  background: #1F1F1F;
+  box-shadow: -8px -8px 12px rgba(0,0,0,0.1),
+              4px 4px 8px rgba(0,0,0,0.75),
+              8px 8px 12px rgba(0,0,0,0.25);
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif;
+}
+
+
+/* Common header line for sections */
+.header-line {
+  width: 100%;
+  height: 2px;
+  background: #FFC008;
+  margin-top: 5px;
+}
+
+/* YOUR PROGRESS Section (Left Column) */
+.progress-section {
+  position: absolute;
+  left: 30px;
+  top: 8px;
+  width: 450px;
+  height: 640px;
+  background: #1F1F1F;
+}
+
+.progress-header {
+  position: absolute;
+  left: 20px;
+  top: 30px;
+  font-weight: 600;
+  font-size: 24px;
+  /* line-height: 28px; */
+  text-transform: uppercase;
+  color: #808080;
+}
+
+.progress-content {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.level-progress {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  color: #F6F6F6;
+}
+
+/* CURRENT STAGE Section (Center Column) */
+.stage-section {
+  position: absolute;
+  left: 496px;
+  top: 8px;
+  width: 560px;
+  height: 640px;
+  background: #1F1F1F;
+}
+
+.stage-header {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+  color: #808080;
+  font-size: 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.stage-description {
+  position: absolute;
+  top: 60px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: #F6F6F6;
+}
+
+.chessboard-container {
+  position: absolute;
+  top: 80px;
+  left: 30px;
+  /* width: 450px;
+  height: 375px; */
+  background: #191919;
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+}
+
+.levels-numbers {
+  position: absolute;
+  top: 612px;
+  width: 100%;
+  text-align: center;
+}
+
+.level-number {
+  margin: 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #F6F6F6;
+  cursor: pointer;
+}
+
+.level-number.active {
+  color: #FFC008;
+}
+
+/* STAGES Section (Right Column) */
+.stages-section {
+  position: absolute;
+  left: 1072px;
+  top: 8px;
+  width: 430px;
+  height: 640px;
+  background: #1F1F1F;
+}
+
+.stages-header {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+  font-size: 24px;
+  text-transform: uppercase;
+  color: #808080;
+}
+
+.stages-list {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stage-item {
+  height: 80px;
+  background: #1A1919;
+  border-bottom: 1px solid #FFC008;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #F6F6F6;
+  cursor: pointer;
+}
+
+.stage-item.selected {
+  background: #FFC008;
+  color: #000;
+}
+
+
+/* Enhancements for star visuals and move indicators */
+.star-square {
+  position: relative;
+}
+
+.star-square::after {
+  content: "★";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  color: #FFD700;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.possible-move {
+  position: relative;
+}
+
+.possible-move::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: rgba(0, 255, 0, 0.3);
+}
+
+.selected-piece {
+  background-color: rgba(255, 255, 0, 0.4) !important;
+}
+
+/* Level number styling with stars */
+.level-number {
+  position: relative;
+  padding: 0 5px;
+}
+
+.level-stars {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #FFC008;
+}
+
+/* Dialog styling enhancements */
+.completion-stars {
+  font-size: 48px;
+  color: #FFC008;
+  margin: 20px 0;
+  letter-spacing: 5px;
+}
+
+/* Progress section enhancements */
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #333;
+  border-radius: 5px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #FFC008;
+  border-radius: 5px;
+}
+
+/* Reset button styling */
+.reset-button {
+  margin-top: 20px;
+  padding: 8px 16px;
+  background-color: #FFC008;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.reset-button:hover {
+  background-color: #E5AB00;
+}
+
+/* Enhanced styling for completed stages */
+.stage-item.completed {
+  border-left: 4px solid #FFC008;
+}
+
+.stage-item .stars {
+  margin-left: 10px;
+  color: #FFC008;
+}
