@@ -103,6 +103,7 @@ const LearnPage = () => {
 
 
   const startLevel = (level) => {
+    setStatus("ready"); // Clear any previous warning status
     setShowStageDialog(false);
     setMovesTaken(0);
     
@@ -144,7 +145,138 @@ const LearnPage = () => {
     startLevel(currentLevel); // Restart the current level
   };
 
-  const handleSquareClick = (square) => { 
+  const isMoveVulnerable = (fromSquare, toSquare) => {
+    if (currentCategory === "Intermediate") {
+      // Skip vulnerability check for Board setup stage
+      return false;
+    }
+    const piece = game.get(fromSquare);
+    if (!piece) return false;
+    const simulatedGame = new Chess(game.fen());
+    // Manually simulate the move by removing and placing the piece.
+    simulatedGame.remove(fromSquare);
+    simulatedGame.put({ type: piece.type, color: piece.color }, toSquare);
+    
+    // Update the active turn to black. (FEN format: [pieces] [active color] [castling] [en passant] [halfmove] [fullmove])
+    const fenParts = simulatedGame.fen().split(" ");
+    fenParts[1] = 'b'; // Set active turn to black.
+    const newFEN = fenParts.join(" ");
+    simulatedGame.load(newFEN);
+    
+    // Get all legal moves for black in this simulated position.
+    const blackMoves = simulatedGame.moves({ verbose: true }).filter(move => move.color === 'b');
+    
+    // Check if any black move can capture on the destination square.
+    return blackMoves.some(move => move.to === toSquare && move.captured !== undefined);
+  };
+  
+  const isWhiteVulnerableAfterMove = (fromSquare, toSquare) => {
+    if (currentCategory === "Intermediate" ) {
+      // Skip vulnerability check for Board setup stage
+      return false;
+    }
+    const piece = game.get(fromSquare);
+    if (!piece) return false;
+    const simulatedGame = new Chess(game.fen());
+    // Simulate the move.
+    simulatedGame.remove(fromSquare);
+    simulatedGame.put({ type: piece.type, color: piece.color }, toSquare);
+    // Update FEN so that it's black's turn.
+    const fenParts = simulatedGame.fen().split(" ");
+    fenParts[1] = 'b';
+    simulatedGame.load(fenParts.join(" "));
+    
+    // Get all legal moves for black.
+    const blackMoves = simulatedGame.moves({ verbose: true });
+    
+    // Collect all white piece positions.
+    const whiteSquares = [];
+    for (let file = 0; file < 8; file++) {
+      for (let rank = 0; rank < 8; rank++) {
+        const square = String.fromCharCode('a'.charCodeAt(0) + file) + (8 - rank);
+        const p = simulatedGame.get(square);
+        if (p && p.color === 'w') {
+          whiteSquares.push(square);
+        }
+      }
+    }
+    
+    // Check if any black move can capture a white piece.
+    return blackMoves.some(move => move.captured && whiteSquares.includes(move.to));
+  };
+  
+  const simulateBlackCapture = (fromSquare, toSquare) => {
+    if (currentCategory === "Intermediate" ) {
+      // Skip vulnerability check for Board setup stage
+      return false;
+    }
+    const simulatedGame = new Chess(game.fen());
+    // Simulate the white move.
+    const movingPiece = simulatedGame.get(fromSquare);
+    simulatedGame.remove(fromSquare);
+    simulatedGame.put({ type: movingPiece.type, color: movingPiece.color }, toSquare);
+    // Force black's turn.
+    const fenParts = simulatedGame.fen().split(" ");
+    fenParts[1] = 'b';
+    simulatedGame.load(fenParts.join(" "));
+    
+    // Find the first black move that results in a capture.
+    const blackMoves = simulatedGame.moves({ verbose: true });
+    const capturingMove = blackMoves.find(move => move.captured);
+    if (capturingMove) {
+      simulatedGame.move({ from: capturingMove.from, to: capturingMove.to });
+    }
+    return simulatedGame;
+  };
+  
+  const isBlackVulnerableAfterCapture = (fromSquare, toSquare) => {
+    if (currentCategory === "Intermediate" ) {
+      // Skip vulnerability check for Board setup stage
+      return false;
+    }
+    const simulatedGame = new Chess(game.fen());
+    const movingPiece = simulatedGame.get(fromSquare);
+    if (!movingPiece) return false;
+    simulatedGame.remove(fromSquare);
+    simulatedGame.put({ type: movingPiece.type, color: movingPiece.color }, toSquare);
+    
+    // Force turn to black.
+    let fenParts = simulatedGame.fen().split(" ");
+    fenParts[1] = 'b';
+    try {
+      simulatedGame.load(fenParts.join(" "));
+    } catch (e) {
+      console.error("Error in isBlackVulnerableAfterCapture (forcing turn):", e);
+      return false;
+    }
+    
+    const candidateCaptures = simulatedGame.moves({ verbose: true }).filter(move => move.captured);
+    
+    for (const candidateCapture of candidateCaptures) {
+      const gameClone = new Chess(simulatedGame.fen());
+      gameClone.move({ from: candidateCapture.from, to: candidateCapture.to });
+      
+      let cloneFenParts = gameClone.fen().split(" ");
+      cloneFenParts[1] = 'w';
+      try {
+        gameClone.load(cloneFenParts.join(" "));
+      } catch (e) {
+        console.error("Error in isBlackVulnerableAfterCapture (clone):", e);
+        continue;
+      }
+      const whiteMoves = gameClone.moves({ verbose: true });
+      const counterCapture = whiteMoves.find(move => move.to === candidateCapture.to && move.captured);
+      if (counterCapture) {
+        return true;
+      }
+    }
+    return false;
+  };
+  
+  
+  
+  
+  {/*const handleSquareClick = (square) => { 
     // Prevent moving black pieces
     const piece = game.get(square);
     if (piece && piece.color === 'b' && !selectedPiece) {
@@ -225,9 +357,245 @@ const LearnPage = () => {
       const validSquares = calculateCustomMoves(square);
       setPossibleMoves(validSquares);
     }
+  };*/}
+  
+  const handleSquareClick = (square) => { 
+    const piece = game.get(square);
+    if (piece && piece.color === 'b' && !selectedPiece) {
+      alert("You cannot move black pieces!");
+      return;
+    }
+    
+    // When a white piece is clicked, set selection.
+    if (!selectedPiece && piece && piece.color === 'w') {
+      setSelectedPiece(square);
+      
+      // Special: If in Castling stage and the piece is the king,
+      // override possible moves with castling moves from chess.js.
+      if (currentCategory === "Intermediate" && currentStage.name === "Castling" && piece.type === 'k') {
+        // Get legal moves for the king.
+        const legalMoves = game.moves({ square, verbose: true });
+        // Filter only moves with castling flag ('k' or 'q').
+        const castlingMoves = legalMoves.filter(m => m.flags.includes('k') || m.flags.includes('q'));
+        setPossibleMoves(castlingMoves.map(m => m.to));
+      } else {
+        const validSquares = calculateCustomMoves(square);
+        setPossibleMoves(validSquares);
+      }
+      return;
+    }
+    
+    if (selectedPiece) {
+      const config = getLevelConfig(currentCategory, currentStage.name, currentLevel);
+      
+      // Branch 1: Check in one (handled separately)
+      if ((currentCategory === "Fundamentals" && currentStage.name === "Check in one") || (currentCategory === "Intermediate" && currentStage.name === "Stalemate") || (currentCategory === "Advanced" && currentStage.name === "Piece Value")) {
+        if (config.answerMove && selectedPiece === config.answerMove.from && square === config.answerMove.to) {
+          const newGame = new Chess(game.fen());
+          const movingPiece = newGame.get(selectedPiece);
+          newGame.remove(selectedPiece);
+          newGame.put({ type: movingPiece.type, color: movingPiece.color }, square);
+          setGame(newGame);
+          setBoardPosition(newGame.fen());
+          setMovesTaken(prev => prev + 1);
+          completeLevel();
+        } else {
+          setStatus("failed");
+          setTimeout(() => {
+            // Failure simulation if desired.
+          }, 500);
+        }
+        setSelectedPiece(null);
+        setPossibleMoves([]);
+        return;
+      }
+      
+      // Branch 2: Out of check stage.
+      else if (currentCategory === "Fundamentals" && currentStage.name === "Out of check") {
+        if (isValidCustomMove(selectedPiece, square)) {
+          const newGame = new Chess(game.fen());
+          const movingPiece = newGame.get(selectedPiece);
+          newGame.remove(selectedPiece);
+          newGame.put({ type: movingPiece.type, color: movingPiece.color }, square);
+          if (newGame.inCheck()) {
+            setStatus("failed");
+            setTimeout(() => {
+              const newGameAfterCapture = simulateBlackCapture(selectedPiece, square);
+              setGame(newGameAfterCapture);
+              setBoardPosition(newGameAfterCapture.fen());
+            }, 500);
+            setSelectedPiece(null);
+            setPossibleMoves([]);
+            return;
+          } else {
+            setGame(newGame);
+            setBoardPosition(newGame.fen());
+            setMovesTaken(prev => prev + 1);
+            completeLevel();
+            setSelectedPiece(null);
+            setPossibleMoves([]);
+            return;
+          }
+        } else {
+          alert("Invalid move! Try again.");
+          setSelectedPiece(null);
+          setPossibleMoves([]);
+          return;
+        }
+      }
+      
+      // Branch 3: "Castling" stage (Intermediate).
+// Inside handleSquareClick, in the Castling branch:
+else if (currentCategory === "Intermediate" && currentStage.name === "Castling") {
+  // Instead of using 'piece' (which is from game.get(square)), get the moving piece from the selectedPiece.
+  const kingPiece = game.get(selectedPiece); // selectedPiece holds the king's location (e.g., "e1")
+  if (kingPiece && kingPiece.type === 'k') {
+    const fromSq = selectedPiece;  // e.g. "e1"
+    const toSq = square;           // e.g. "g1" or "c1"
+    const isCastlingMove = Math.abs(fromSq.charCodeAt(0) - toSq.charCodeAt(0)) === 2 && fromSq[1] === toSq[1];
+
+    if (isCastlingMove) {
+      // Verify that the move matches answerMove.
+      if (config.answerMove && fromSq === config.answerMove.from && toSq === config.answerMove.to) {
+        const newGame = new Chess(game.fen());
+        // Convert to SAN castling notation.
+        const san = (toSq === "g1" || toSq === "g8") ? "O-O" : (toSq === "c1" || toSq === "c8") ? "O-O-O" : null;
+        if (san) {
+          const move = newGame.move(san);
+          if (move) {
+            setGame(newGame);
+            setBoardPosition(newGame.fen());
+            setMovesTaken(prev => prev + 1);
+            completeLevel();
+          } else {
+            alert("Invalid castling move! Try again.");
+          }
+        } else {
+          alert("Invalid castling move! Try again.");
+        }
+      } else {
+        alert("Invalid castling move! Try again.");
+      }
+      setSelectedPiece(null);
+      setPossibleMoves([]);
+      return;
+    }
+    // If not a castling move, process as a normal move.
+    else {
+      if (isValidCustomMove(selectedPiece, square)) {
+        const newGame = new Chess(game.fen());
+        const movingPiece = newGame.get(selectedPiece);
+        newGame.remove(selectedPiece);
+        newGame.put({ type: movingPiece.type, color: movingPiece.color }, square);
+        setGame(newGame);
+        setBoardPosition(newGame.fen());
+        setMovesTaken(prev => prev + 1);
+        // Do not complete the level here.
+        setSelectedPiece(null);
+        setPossibleMoves([]);
+        return;
+      } else {
+        alert("Invalid move! Try again.");
+        setSelectedPiece(null);
+        setPossibleMoves([]);
+        return;
+      }
+    }
+  }
+  // For non-king moves (clearing moves) in castling stage.
+  else {
+    if (isValidCustomMove(selectedPiece, square)) {
+      const newGame = new Chess(game.fen());
+      const movingPiece = newGame.get(selectedPiece);
+      newGame.remove(selectedPiece);
+      newGame.put({ type: movingPiece.type, color: movingPiece.color }, square);
+      setGame(newGame);
+      setBoardPosition(newGame.fen());
+      setMovesTaken(prev => prev + 1);
+      setSelectedPiece(null);
+      setPossibleMoves([]);
+      return;
+    } else {
+      alert("Invalid move! Try again.");
+      setSelectedPiece(null);
+      setPossibleMoves([]);
+      return;
+    }
+  }
+}
+
+      // Branch for "En passant" stage.
+    else if (currentCategory === "Intermediate" && currentStage.name === "En passant") {
+      if (config.answerMove && selectedPiece === config.answerMove.from && square === config.answerMove.to) {
+        // Accept the move as en passant.
+        const newGame = new Chess(game.fen());
+        const movingPiece = newGame.get(selectedPiece);
+        newGame.remove(selectedPiece);
+        // Perform the move (chess.js will recognize en passant based on FEN).
+        newGame.put({ type: movingPiece.type, color: movingPiece.color }, square);
+        setGame(newGame);
+        setBoardPosition(newGame.fen());
+        setMovesTaken(prev => prev + 1);
+        completeLevel();
+      } else {
+        setStatus("failed");
+        setTimeout(() => {}, 500);
+      }
+      setSelectedPiece(null);
+      setPossibleMoves([]);
+      return;
+    }
+
+      
+      // Branch 4: All other stages.
+      else {
+        const isValidLearningMove = isValidCustomMove(selectedPiece, square);
+        let skipVulnerability = false;
+        if (isWhiteVulnerableAfterMove(selectedPiece, square)) {
+          if (isBlackVulnerableAfterCapture(selectedPiece, square)) {
+            skipVulnerability = true;
+          }
+        }
+        if (isValidLearningMove && !skipVulnerability && isWhiteVulnerableAfterMove(selectedPiece, square)) {
+          setStatus("failed");
+          setTimeout(() => {
+            const newGame = simulateBlackCapture(selectedPiece, square);
+            setGame(newGame);
+            setBoardPosition(newGame.fen());
+          }, 500);
+          return;
+        }
+        if (isValidLearningMove) {
+          const newGame = new Chess(game.fen());
+          const movingPiece = newGame.get(selectedPiece);
+          newGame.remove(selectedPiece);
+          newGame.put({ type: movingPiece.type, color: movingPiece.color }, square);
+          setGame(newGame);
+          setBoardPosition(newGame.fen());
+          setMovesTaken(prev => prev + 1);
+          const remainingTargets = starsToCapture.filter(target => target !== square);
+          setStarsToCapture(remainingTargets);
+          if (remainingTargets.length === 0) {
+            completeLevel();
+          }
+          setSelectedPiece(null);
+          setPossibleMoves([]);
+          return;
+        } else {
+          alert("Invalid move! Try again.");
+        }
+      }
+    }
   };
   
-  const handleDrop = (sourceSquare, targetSquare) => {
+  
+  
+  
+    
+  
+  
+
+  {/*const handleDrop = (sourceSquare, targetSquare) => {
     // Prevent moving black pieces
     const piece = game.get(sourceSquare);
     if (piece && piece.color === 'b') {
@@ -292,7 +660,174 @@ const LearnPage = () => {
       alert("Invalid move! Try again.");
       return false;
     }
+  };*/}
+
+  const handleDrop = (sourceSquare, targetSquare) => {
+    const piece = game.get(sourceSquare);
+    if (piece && piece.color === 'b') {
+      alert("You cannot move black pieces!");
+      return false;
+    }
+    
+    const config = getLevelConfig(currentCategory, currentStage.name, currentLevel);
+    
+    // Branch 1: Check in one.
+    if (currentCategory === "Fundamentals" && currentStage.name === "Check in one") {
+      if (config.answerMove && sourceSquare === config.answerMove.from && targetSquare === config.answerMove.to) {
+        const newGame = new Chess(game.fen());
+        const movingPiece = newGame.get(sourceSquare);
+        newGame.remove(sourceSquare);
+        newGame.put({ type: movingPiece.type, color: movingPiece.color }, targetSquare);
+        setGame(newGame);
+        setBoardPosition(newGame.fen());
+        setMovesTaken(prev => prev + 1);
+        completeLevel();
+      } else {
+        setStatus("failed");
+        setTimeout(() => {}, 500);
+      }
+      setSelectedPiece(null);
+      setPossibleMoves([]);
+      return false;
+    }
+    
+    // Branch 2: Out of check.
+    else if (currentCategory === "Fundamentals" && currentStage.name === "Out of check") {
+      if (isValidCustomMove(sourceSquare, targetSquare)) {
+        const newGame = new Chess(game.fen());
+        const movingPiece = newGame.get(sourceSquare);
+        newGame.remove(sourceSquare);
+        newGame.put({ type: movingPiece.type, color: movingPiece.color }, targetSquare);
+        if (newGame.inCheck()) {
+          setStatus("failed");
+          setTimeout(() => {
+            const newGameAfterCapture = simulateBlackCapture(sourceSquare, targetSquare);
+            setGame(newGameAfterCapture);
+            setBoardPosition(newGameAfterCapture.fen());
+          }, 500);
+          setSelectedPiece(null);
+          setPossibleMoves([]);
+          return false;
+        } else {
+          setGame(newGame);
+          setBoardPosition(newGame.fen());
+          setMovesTaken(prev => prev + 1);
+          completeLevel();
+          setSelectedPiece(null);
+          setPossibleMoves([]);
+          return true;
+        }
+      } else {
+        setStatus("failed");
+        setTimeout(() => {}, 500);
+        setSelectedPiece(null);
+        setPossibleMoves([]);
+        return false;
+      }
+    }
+    
+    // Branch 3: "Castling" stage (Intermediate).
+else if (currentCategory === "Intermediate" && currentStage.name === "Castling") {
+  if (piece.type === 'k') {
+    const fromFile = sourceSquare[0], toFile = targetSquare[0];
+    const fromRank = sourceSquare[1], toRank = targetSquare[1];
+    const fileDiff = Math.abs(toFile.charCodeAt(0) - fromFile.charCodeAt(0));
+    if (fromRank === toRank && fileDiff === 2) {
+      if (config.answerMove && sourceSquare === config.answerMove.from && targetSquare === config.answerMove.to) {
+        const newGame = new Chess(game.fen());
+        const moveSAN = (targetSquare === 'g1') ? "O-O" : (targetSquare === 'c1') ? "O-O-O" : null;
+        if (moveSAN) {
+          const castlingMove = newGame.move(moveSAN);
+          if (castlingMove) {
+            setGame(newGame);
+            setBoardPosition(newGame.fen());
+            setMovesTaken(prev => prev + 1);
+            completeLevel();
+          } else {
+            setStatus("failed");
+            setTimeout(() => {}, 500);
+          }
+        } else {
+          setStatus("failed");
+          setTimeout(() => {}, 500);
+        }
+      } else {
+        setStatus("failed");
+        setTimeout(() => {}, 500);
+      }
+      setSelectedPiece(null);
+      setPossibleMoves([]);
+      return true;
+    }
+  }
+}
+
+    // Branch for "En passant"
+  else if (currentCategory === "Fundamentals" && currentStage.name === "En passant") {
+    if (config.answerMove && sourceSquare === config.answerMove.from && targetSquare === config.answerMove.to) {
+      const newGame = new Chess(game.fen());
+      const movingPiece = newGame.get(sourceSquare);
+      newGame.remove(sourceSquare);
+      newGame.put({ type: movingPiece.type, color: movingPiece.color }, targetSquare);
+      setGame(newGame);
+      setBoardPosition(newGame.fen());
+      setMovesTaken(prev => prev + 1);
+      completeLevel();
+    } else {
+      setStatus("failed");
+      setTimeout(() => {}, 500);
+    }
+    setSelectedPiece(null);
+    setPossibleMoves([]);
+    return false;
+  }
+    
+    // Branch 4: All other stages.
+    else {
+      let skipVulnerability = false;
+      if (isWhiteVulnerableAfterMove(sourceSquare, targetSquare)) {
+        if (isBlackVulnerableAfterCapture(sourceSquare, targetSquare)) {
+          skipVulnerability = true;
+        }
+      }
+      const isValidLearningMove = isValidCustomMove(sourceSquare, targetSquare);
+      if (isValidLearningMove && !skipVulnerability && isWhiteVulnerableAfterMove(sourceSquare, targetSquare)) {
+        setStatus("failed");
+        setTimeout(() => {
+          const newGame = simulateBlackCapture(sourceSquare, targetSquare);
+          setGame(newGame);
+          setBoardPosition(newGame.fen());
+        }, 500);
+        return false;
+      }
+      if (isValidLearningMove) {
+        const newGame = new Chess(game.fen());
+        const movingPiece = newGame.get(sourceSquare);
+        newGame.remove(sourceSquare);
+        newGame.put({ type: movingPiece.type, color: movingPiece.color }, targetSquare);
+        setGame(newGame);
+        setBoardPosition(newGame.fen());
+        setMovesTaken(prev => prev + 1);
+        const remainingTargets = starsToCapture.filter(target => target !== targetSquare);
+        setStarsToCapture(remainingTargets);
+        if (remainingTargets.length === 0) {
+          completeLevel();
+        }
+        setSelectedPiece(null);
+        setPossibleMoves([]);
+        return true;
+      } else {
+        alert("Invalid move! Try again.");
+        return false;
+      }
+    }
   };
+  
+  
+  
+  
+    
+
   
   // Custom move validation for learning scenarios
   // const isValidCustomMove = (fromSquare, toSquare) => {
@@ -355,20 +890,43 @@ const LearnPage = () => {
         return (
           Math.abs(fromCoord.row - toCoord.row) <= 1 && Math.abs(fromCoord.col - toCoord.col) <= 1
         );
-      case 'p': // Pawn
+      case 'p': {
         const direction = piece.color === 'w' ? -1 : 1;
-        // Forward move
-        if (fromCoord.col === toCoord.col && toCoord.row === fromCoord.row + direction) {
-          return !game.get(toSquare); // Ensure the square is empty
+        const fromCoord = algebraicToCoord(fromSquare);
+        const toCoord = algebraicToCoord(toSquare);
+        
+        // Forward move.
+        if (fromCoord.col === toCoord.col) {
+          // One-square forward.
+          if (toCoord.row === fromCoord.row + direction && !game.get(toSquare)) {
+            return true;
+          }
+          // Two-square forward from initial rank.
+          const initialRank = piece.color === 'w' ? 6 : 1;
+          if (fromCoord.row === initialRank && toCoord.row === fromCoord.row + 2 * direction) {
+            const intermediateSquare = coordToAlgebraic({ row: fromCoord.row + direction, col: fromCoord.col });
+            if (!game.get(intermediateSquare) && !game.get(toSquare)) {
+              return true;
+            }
+          }
         }
-        // Diagonal capture
-        if (
-          Math.abs(fromCoord.col - toCoord.col) === 1 &&
-          toCoord.row === fromCoord.row + direction
-        ) {
-          return starsToCapture.includes(toSquare); // Ensure the square contains a star
+        
+        // Diagonal move: normal capture.
+        if (Math.abs(fromCoord.col - toCoord.col) === 1 && toCoord.row === fromCoord.row + direction) {
+          const targetPiece = game.get(toSquare);
+          if (targetPiece && targetPiece.color !== piece.color) {
+            return true;
+          }
+          // En passant: allow if the target equals the en passant square.
+          const fenParts = game.fen().split(" ");
+          const enPassantSquare = fenParts[3];
+          if (enPassantSquare !== "-" && enPassantSquare === toSquare) {
+            return true;
+          }
         }
         return false;
+      }
+                        
       default:
         return false;
     }
@@ -391,7 +949,7 @@ const LearnPage = () => {
   const calculateCustomMoves = (square) => {
     const piece = game.get(square);
     if (!piece) return [];
-  
+    
     switch (piece.type) {
       case 'r': // Rook
         return generateRookMoves(square);
@@ -541,29 +1099,64 @@ const LearnPage = () => {
     const moves = [];
     const fromCoord = algebraicToCoord(square);
     const direction = color === 'w' ? -1 : 1;
-    // Forward move
+  
+    // One-square forward move.
     const forwardCoord = { row: fromCoord.row + direction, col: fromCoord.col };
     if (forwardCoord.row >= 0 && forwardCoord.row < 8) {
       const forwardSquare = coordToAlgebraic(forwardCoord);
-      if (!game.get(forwardSquare)) { // Ensure the square is empty
+      if (!game.get(forwardSquare)) {
         moves.push(forwardSquare);
+        // Two-square move from initial rank.
+        const initialRank = color === 'w' ? 6 : 1;
+        if (fromCoord.row === initialRank) {
+          const forwardTwoCoord = { row: fromCoord.row + 2 * direction, col: fromCoord.col };
+          const forwardTwoSquare = coordToAlgebraic(forwardTwoCoord);
+          if (!game.get(forwardTwoSquare) && !game.get(forwardSquare)) {
+            moves.push(forwardTwoSquare);
+          }
+        }
       }
     }
-    // Diagonal captures (left and right)
-    const diagonalLeftCoord = { row: fromCoord.row + direction, col: fromCoord.col - 1 };
-    const diagonalRightCoord = { row: fromCoord.row + direction, col: fromCoord.col + 1 };
   
-    [diagonalLeftCoord, diagonalRightCoord].forEach((diagCoord) => {
-      if (diagCoord.row >= 0 && diagCoord.row < 8 && diagCoord.col >= 0 && diagCoord.col < 8) {
-        const diagSquare = coordToAlgebraic(diagCoord);
-        if (starsToCapture.includes(diagSquare)) { // Check if the square contains a star
+    // Diagonal capture moves (if an opponent piece exists).
+    const diagLeftCoord = { row: fromCoord.row + direction, col: fromCoord.col - 1 };
+    const diagRightCoord = { row: fromCoord.row + direction, col: fromCoord.col + 1 };
+    [diagLeftCoord, diagRightCoord].forEach(coord => {
+      if (
+        coord.row >= 0 &&
+        coord.row < 8 &&
+        coord.col >= 0 &&
+        coord.col < 8
+      ) {
+        const diagSquare = coordToAlgebraic(coord);
+        const targetPiece = game.get(diagSquare);
+        if (targetPiece && targetPiece.color !== color) {
           moves.push(diagSquare);
         }
       }
     });
   
+    // En passant: If an en passant target square exists in the FEN and is diagonally adjacent.
+    const fenParts = game.fen().split(" ");
+    const enPassantSquare = fenParts[3]; // 4th field of FEN.
+    if (enPassantSquare !== "-") {
+      // const enPassantCoord = algebraicToCoord(enPassantSquare);
+      // const rowDiff = enPassantCoord.row - fromCoord.row;
+      // const colDiff = Math.abs(enPassantCoord.col - fromCoord.col);
+      // if (rowDiff === direction && colDiff === 1) {
+      //   // Add en passant target square even if it's empty.
+      //   moves.push(enPassantSquare);
+      // }
+      const epCoord = algebraicToCoord(enPassantSquare);
+      if (epCoord.row === fromCoord.row + direction && Math.abs(epCoord.col - fromCoord.col) === 1) {
+        moves.push(enPassantSquare);
+      }
+    }
     return moves;
   };
+  
+  
+  
 
   
   const checkForCapture = (square) => {
@@ -614,9 +1207,12 @@ const LearnPage = () => {
       setShowCompletionDialog(true);
     } else {
       // Move to next level
+      const nextLevel = currentLevel + 1;
       setTimeout(() => {
-        setCurrentLevel(prev => prev + 1);
-        startLevel(currentLevel + 1);
+        //setCurrentLevel(prev => prev + 1);
+        //startLevel(currentLevel + 1);
+        setCurrentLevel(nextLevel);
+        startLevel(nextLevel);
       }, 500);
     }
   };
@@ -634,7 +1230,7 @@ const LearnPage = () => {
     const styles = {};
     
     // Highlight stars to capture (only for Chess Pieces category)
-    if (currentCategory === "Chess Pieces") {
+    if (currentCategory === "Chess Pieces" || (currentCategory === "Intermediate" && currentStage.name === "Board setup")) {
       starsToCapture.forEach(star => {
         styles[star] = {
           backgroundImage: 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'100%\' viewBox=\'0 0 24 24\'><path fill=\'%23FFD700\' d=\'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z\'/></svg>")',
@@ -990,33 +1586,31 @@ const LearnPage = () => {
         };
       case 4:
         return { 
-          fen: '8/8/8/8/8/8/3P2P1/4K2k w - - 0 1', 
+          fen: '7k/8/8/8/8/8/3P2P1/4K3 w - - 0 1', 
           stars: ['d3', 'd4', 'c5', 'g3'], 
           optimalMoves: 4 
         };
       case 5:
         return { 
-          fen: '8/8/8/8/8/8/3P2P1/4K2k w - - 0 1', 
+          fen: '7k/8/8/8/8/8/3P2P1/4K3 w - - 0 1', 
           stars: ['d3', 'd4','g3', 'g4', 'f5'], 
           optimalMoves: 6 
         };
       case 6:
         return { 
-          fen: '8/8/8/8/8/8/3P2P1/4K2k w - - 0 1', 
+          fen: '7k/8/8/8/8/8/3P2P1/4K3 w - - 0 1', 
           stars: ['d3', 'd4', 'g3', 'g4', 'f5', 'e5'], 
           optimalMoves: 8 
         };
       default:
         return { 
-          fen: '8/8/8/8/8/8/3P4/4K2k w - - 0 1', 
+          fen: '7k/8/8/8/8/8/3P4/4K3 w - - 0 1', 
           stars: ['d3'], 
           optimalMoves: 1 
         };
     }
   };
 
-  
-  
   // Fundamentals Category
   // Capture level configurations
   const getCaptureLevelConfig = (level) => {
@@ -1024,7 +1618,7 @@ const LearnPage = () => {
       case 1:
         return {
           fen: '8/2p2p2/8/8/8/8/2R5/4K2k w - - 0 1', // White rook at c2, black pawns at c7 and f7
-          mainPiece: 'c2', // Main piece is the white rook
+          //mainPiece: 'c2', // Main piece is the white rook
           stars: ['c7', 'f7'],
           optimalMoves: 2,
           description: 'Take the black pieces!',
@@ -1032,104 +1626,106 @@ const LearnPage = () => {
       case 2:
         return {
           fen: '8/8/2r2p2/8/8/5Q2/8/4K2k w - - 0 1', // White queen at f4, black pawn at f7, black rook at c7
-          mainPiece: 'f3', // Main piece is the white queen,
-          stars: ['c7', 'f7'], // Black rook and pawn to capture
+          //mainPiece: 'f3', // Main piece is the white queen,
+          stars: ['c6', 'f6'], // Black rook and pawn to capture
           optimalMoves: 2,
           description: "Take the black pieces! And don't lose yours.",
         };
       case 3:
         return {
           fen: '8/5r2/8/1r3p2/8/3B4/8/4K2k w - - 0 1', // White bishop at d3, black pawn at f5, black rooks at b5 and f7
-          mainPiece: 'd3', // Main piece is the white bishop
+          //mainPiece: 'd3', // Main piece is the white bishop
+          stars: ['b5', 'f5','f7'], // Black rooks to capture
           optimalMoves: 4,
           description: "Take the black pieces! And don't lose yours.",
         };
       case 4:
         return {
           fen: '8/5b2/5p2/3n2p1/8/6Q1/8/4K2k w - - 0 1', // White queen at g3, black knight at d5, pawns at g5 and f6, bishop at f7
-          mainPiece: 'g3', // Main piece is the white queen
+          //mainPiece: 'g3', // Main piece is the white queen
+          stars:  ['d5', 'g5', 'f6', 'f7'], // Black pawns to capture
           optimalMoves: 5,
           description: "Take the black pieces! And don't lose yours.",
         };
       case 5:
         return {
           fen: '8/3b4/2p2q2/8/3p1N2/8/8/4K2k w - - 0 1', // White knight at f4, black pawns at d4 and c6, bishop at d7, queen at f6
-          mainPiece: 'f4', // Main piece is the white knight
+          //mainPiece: 'f4', // Main piece is the white knight
+          stars:  ['d4', 'c6', 'f6', 'd7'], // Black pieces to capture
           optimalMoves: 6,
           description: "Take the black pieces! And don't lose yours.",
         };
       default:
         return {
           fen: '8/2p2p2/8/8/8/8/2R5/4K2k w - - 0 1', // Default to level 1
-          mainPiece: 'c2',
+          //mainPiece: 'c2',
+          stars: ['c7', 'f7'],
           optimalMoves: 2,
           description: "Take the black pieces! And don't lose yours.",
         };
     }
   };
 
-    // Protection level configurations
-    const getProtectionLevelConfig = (level) => {
-      switch (level) {
-        case 1:
-          return { 
-            //fen: '8/8/8/8/8/3R4/8/5b2 w - - 0 1', 
-            fen: '8/8/8/4bb2/8/8/P2P4/R2K2k1 w - - 0 1', // Added white king at e1 and black king at h1
-            optimalMoves: 1 ,
-            description: "You're under attack! Escape the threat!",
-          };
-        case 2:
-          return { 
-            //fen: '8/8/8/8/8/3R4/8/5b1n w - - 0 1', 
-            fen: '8/8/8/2q2N2/8/8/8/4K2k w - - 0 1', // Added white king at e1 and black king at h1
-            optimalMoves: 2, 
-            description: "You're under attack! Escape the threat!",
-          };
-        case 3:
-          return { 
-            //fen: '8/8/5n2/8/8/3R4/8/5b1n w - - 0 1', 
-            fen: '8/N2q4/8/8/8/8/6R1/4K2k w - - 0 1',
-            optimalMoves: 3,
-            description: "There is no escape, but you can defend!",
-          };
-        case 4:
-          return { 
-            //fen: '8/8/5n2/8/8/3R4/8/1b3b1n w - - 0 1', 
-            fen: '8/8/1Bq5/8/2P5/8/8/4K2k w - - 0 1',
-            optimalMoves: 4,
-            description: "There is no escape, but you can defend!",
-          };
-        case 5:
-          return { 
-            //fen: '8/8/5n2/8/8/3R2R1/8/1b3b1n w - - 0 1', 
-            fen: '1r6/8/5b2/8/8/5N2/P2P4/R1B2K1k w - - 0 1',
-            optimalMoves: 5,
-            description: "There is no escape, but you can defend!",
-          };
-        case 6:
-          return { 
-            //fen: '8/8/5n2/8/8/3R2R1/1n6/1b3b1n w - - 0 1', 
-            fen: '8/1b6/8/8/8/3P2P1/5NRP/r3K2k w - - 0 1',
-            optimalMoves: 6,
-            description: "Don't let them take any undefended piece!", 
-          };
-        default:
-          return { 
-            //fen: '8/8/8/8/8/3R4/8/5b2 w - - 0 1', 
-            fen: '8/8/8/8/8/3R4/8/4K2k w - - 0 1', // Added white king at e1 and black king at h1
-            optimalMoves: 1,
-            description: "You're under attack! Escape the threat!", 
-          };
-      }
-    };
-  
-    // Combat level configurations
+  // Protection level configurations
+  const getProtectionLevelConfig = (level) => {
+  switch (level) {
+    case 1:
+      return { 
+        fen: '8/8/8/4bb2/8/8/P2P4/R2K2k1 w - - 0 1', 
+        optimalMoves: 1,
+        description: "You're under attack! Escape the threat!",
+      };
+    case 2:
+      return { 
+        fen: '8/8/8/2q2N2/8/8/8/4K2k w - - 0 1',
+        optimalMoves: 2, 
+        description: "You're under attack! Escape the threat!",
+      };
+    case 3:
+      return { 
+        fen: '8/N2q4/8/8/8/8/6R1/4K2k w - - 0 1',
+        optimalMoves: 3,
+        description: "There is no escape, but you can defend!",
+        //exemptMove: { from: 'g2', to: 'a2' }  // Allow this move despite vulnerability.
+      };
+    case 4:
+      return { 
+        fen: '8/8/1Bq5/8/2P5/8/8/4K2k w - - 0 1',
+        optimalMoves: 4,
+        description: "There is no escape, but you can defend!",
+        //exemptMove: { from: 'c4', to: 'c5' }
+      };
+    case 5:
+      return { 
+        fen: '1r6/8/5b2/8/8/3P1N2/P7/R1B2K1k w - - 0 1',
+        optimalMoves: 5,
+        description: "There is no escape, but you can defend!",
+        //exemptMove: { from: 'd3', to: 'd4' }
+      };
+    case 6:
+      return { 
+        fen: '7k/1b6/8/8/7K/3P2P1/5NRP/r7 w - - 0 1',
+        optimalMoves: 6,
+        description: "Don't let them take any undefended piece!",
+        //exemptMove: { from: 'f2', to: 'e4' }
+      };
+    default:
+      return { 
+        fen: '8/8/8/8/8/3R4/8/4K2k w - - 0 1',
+        optimalMoves: 1,
+        description: "You're under attack! Escape the threat!",
+      };
+  }
+};
+
+  // Combat level configurations
   const getCombatLevelConfig = (level) => {
     switch (level) {
       case 1:
         return { 
           //fen: '8/8/8/8/8/3R4/8/5b2 w - - 0 1', 
           fen: '8/8/8/8/P2r4/6B1/8/4K2k w - - 0 1', // Added white king at e1 and black king at h1
+          stars: ['d4'],
           optimalMoves: 1,
           description: "Take the black pieces! And don't lose yours.", 
         };
@@ -1137,6 +1733,7 @@ const LearnPage = () => {
         return { 
           //fen: '8/8/8/8/8/3R2B1/8/5b1n w - - 0 1', 
           fen: '2r5/8/3b4/2P5/8/1P6/2B5/4K2k w - - 0 1', // Added white king at e1 and black king at h1
+          stars: ['c8', 'd6'],
           optimalMoves: 2,
           description: "Take the black pieces! And don't lose yours.", 
         };
@@ -1144,20 +1741,23 @@ const LearnPage = () => {
         return { 
           //fen: '8/8/5n2/8/8/3R2B1/8/5b1n w - - 0 1', 
           fen: '1r6/8/5n2/3P4/4P1P1/1Q6/8/4K2k w - - 0 1',
+          stars: ['b8', 'f6'],
           optimalMoves: 3, 
           description: "Take the black pieces! And don't lose yours.", 
         };
       case 4:
         return { 
           //fen: '8/8/5n2/4b3/8/3R2B1/8/5b1n w - - 0 1', 
-          fen: '2r5/8/3R4/5b2/8/8/PPP5/4K2k w - - 0 1',
+          fen: '2r5/8/3N4/5b2/8/8/PPP5/4K2k w - - 0 1',
+          stars: ['c8', 'f5'],
           optimalMoves: 4,
           description: "Take the black pieces! And don't lose yours.",  
         };
       case 5:
         return { 
           //fen: '8/8/5n2/4b3/8/3R2B1/6N1/1b3b1n w - - 0 1', 
-          fen: '8/6q1/8/4P1P1/8/4B3/r2P2R1/4K2k w - - 0 1',
+          fen: 'k7/6q1/8/4P1P1/8/4B3/r2P2N1/4K3 w - - 0 1',
+          stars: ['a2', 'g7'],
           optimalMoves: 5,
           description: "Take the black pieces! And don't lose yours.",  
         };
@@ -1165,67 +1765,68 @@ const LearnPage = () => {
         return { 
           //fen: '8/8/8/8/8/3R4/8/5b2 w - - 0 1', 
           fen: '8/8/8/8/P2r4/6B1/8/4K2k w - - 0 1', // Added white king at e1 and black king at h1
+          stars: ['d4'],
           optimalMoves: 1,
           description: "Take the black pieces! And don't lose yours.",  
         };
     }
   };
-  
+
   // Check in one level configurations
   const getCheckInOneLevelConfig = (level) => {
     switch (level) {
       case 1:
         return { 
-          //fen: '8/8/8/8/8/3Q4/8/4k3 w - - 0 1', 
-          fen: '4k3/8/2b5/8/8/8/8/R4K2 w - - 0 1', // Added white king at e1
+          fen: '4k3/8/2b5/8/8/8/8/R4K2 w - - 0 1', // White king at e1
           optimalMoves: 1,
-          description: "Aim at the opponent's king in one move!",  
+          description: "Aim at the opponent's king in one move!",
+          answerMove: { from: 'a1', to: 'e1' } // Correct move for level 1
         };
       case 2:
         return { 
-          //fen: '8/8/8/8/8/8/1Q6/4k3 w - - 0 1', 
-          fen: '8/8/4k3/3n4/8/1Q6/8/4K3 w - - 0 1', // Added white king at e1
+          fen: '8/8/4k3/3n4/8/1Q6/8/4K3 w - - 0 1', // White king at e1
           optimalMoves: 1,
-          description: "Aim at the opponent's king in one move!",  
+          description: "Aim at the opponent's king in one move!",
+          answerMove: { from: 'b3', to: 'h3' } // Correct move for level 2
         };
       case 3:
         return { 
-          //fen: '8/8/8/8/8/5R2/8/4k3 w - - 0 1', 
-          fen: '3qk3/1pp5/3p4/4p3/8/3B4/6r1/4K3 w - - 0 1', // Added white king at e1
+          fen: '3qk3/1pp5/3p4/4p3/8/3B4/6r1/4K3 w - - 0 1', // White king at e1
           optimalMoves: 1,
-          description: "Aim at the opponent's king in one move!",  
+          description: "Aim at the opponent's king in one move!",
+          answerMove: { from: 'd3', to: 'b5' } // Correct move for level 3
         };
       case 4:
         return { 
-          //fen: '8/8/8/8/8/8/3B4/4k3 w - - 0 1', 
-          fen: '2r2q2/2n5/8/4k3/8/2N1P3/3P2B1/4K3 w - - 0 1', // Added white king at e1
+          fen: '2r2q2/2n5/8/4k3/8/2NPP3/6B1/4K3 w - - 0 1', // White king at e1
           optimalMoves: 1,
-          description: "Aim at the opponent's king in one move!",  
+          description: "Aim at the opponent's king in one move!",
+          answerMove: { from: 'd3', to: 'd4' } // Correct move for level 4 (white pawn d3 -> d4)
         };
       case 5:
         return { 
-          //fen: '4r3/8/8/8/8/8/3N4/4k3 w - - 0 1', 
-          fen: '8/2b1q2n/1ppk4/2N5/8/8/8/4K3 w - - 0 1', // Added white king at e1
+          fen: '8/2b1q2n/1ppk4/2N5/8/8/8/4K3 w - - 0 1', // White king at e1
           optimalMoves: 1,
-          description: "Aim at the opponent's king in one move!",  
+          description: "Aim at the opponent's king in one move!",
+          answerMove: { from: 'c5', to: 'b7' } // Correct move for level 5
         };
       case 6:
         return { 
-          //fen: '8/8/8/8/8/5P2/8/4k1N1 w - - 0 1', 
-          fen: '6R1/1k3r2/8/4Q3/8/2n5/8/4K3 w - - 0 1', // Added white king at e1
+          fen: '6R1/1k3r2/8/4Q3/8/2n5/8/4K3 w - - 0 1', // White king at e1
           optimalMoves: 1,
-          description: "Aim at the opponent's king in one move!",  
+          description: "Aim at the opponent's king in one move!",
+          answerMove: { from: 'e5', to: 'b8' } // Correct move for level 6
         };
       default:
         return { 
-          //fen: '8/8/8/8/8/3Q4/8/4k3 w - - 0 1', 
-          fen: '8/8/8/8/8/3Q4/8/4K2k w - - 0 1', // Added white king at e1
+          fen: '8/8/8/8/8/3Q4/8/4K2k w - - 0 1', // White king at e1
           optimalMoves: 1,
-          description: "Aim at the opponent's king in one move!",  
+          description: "Aim at the opponent's king in one move!",
+          answerMove: { from: 'a1', to: 'e1' }
         };
     }
   };
-  
+
   // Out of check level configurations
   const getOutOfCheckLevelConfig = (level) => {
     switch (level) {
@@ -1253,7 +1854,7 @@ const LearnPage = () => {
       case 4:
         return { 
           //fen: '8/8/8/8/6r1/8/8/4K3 w - - 0 1', 
-          fen: '8/8/8/3b4/8/4n3/KBn5/1R5k w - - 0 1',
+          fen: '8/8/8/3b4/8/4N3/KBn5/1R5k w - - 0 1',
           optimalMoves: 1,
           description: "You can get out of check by taking the attacking piece.",  
         };
@@ -1289,7 +1890,8 @@ const LearnPage = () => {
           //fen: '8/8/8/8/8/8/1Q6/4k3 w - - 0 1', 
           fen: '3qk3/3ppp2/8/8/2B5/5Q2/8/4K3 w - - 0 1', // Added white king at h1
           optimalMoves: 1,
-          description: "Attack your opponent's king in a way that cannot be defended!",  
+          description: "Attack your opponent's king in a way that cannot be defended!", 
+          answerMove: { from: 'f3', to: 'f7' } 
         };
       case 2:
         return { 
@@ -1297,27 +1899,31 @@ const LearnPage = () => {
           fen: '6rk/6pp/7P/6N1/8/8/8/4K3 w - - 0 1',
           optimalMoves: 1,
           description: "Attack your opponent's king in a way that cannot be defended!",  
+          answerMove: { from: 'g5', to: 'f7' }
         };
       case 3:
         return { 
           //fen: '7k/5Q2/8/8/8/8/8/8 w - - 0 1', 
           fen: 'R7/8/7k/2r5/5n2/8/6Q1/4K3 w - - 0 1',
           optimalMoves: 1,
-          description: "Attack your opponent's king in a way that cannot be defended!",  
+          description: "Attack your opponent's king in a way that cannot be defended!",
+          answerMove: { from: 'a8', to: 'h8' }  
         };
       case 4:
         return { 
           //fen: '3qk3/8/8/8/8/8/5Q2/8 w - - 0 1', 
           fen: '2rb4/2k5/5N2/1Q6/8/8/8/4K3 w - - 0 1',
           optimalMoves: 1,
-          description: "Attack your opponent's king in a way that cannot be defended!",  
+          description: "Attack your opponent's king in a way that cannot be defended!", 
+          answerMove: { from: 'f6', to: 'e8' } 
         };
       case 5:
         return { 
           //fen: '5rk1/6p1/6Qp/8/8/8/8/8 w - - 0 1', 
-          fen: '1r2kb2/ppB1p3/2P2p2/2p1N3/B7/8/8/3RK3 w - - 0 1',
+          fen: '1r2kb2/ppP1p3/2B2p2/2p1N3/B7/8/8/3RK3 w - - 0 1',
           optimalMoves: 1,
-          description: "Attack your opponent's king in a way that cannot be defended!",  
+          description: "Attack your opponent's king in a way that cannot be defended!",
+          answerMove: { from: 'c6', to: 'b7' }  
         };
       case 6:
         return { 
@@ -1326,6 +1932,7 @@ const LearnPage = () => {
           fen: '8/pk1N4/n7/b7/6B1/1r3b2/8/1RR1K3 w - - 0 1',
           optimalMoves: 1,
           description: "Attack your opponent's king in a way that cannot be defended!",  
+          answerMove: { from: 'g4', to: 'f3' }
         };
       default:
         return { 
@@ -1337,9 +1944,7 @@ const LearnPage = () => {
     }
   };
 
-  
-
-//Intermediate Category
+  //Intermediate Category
 // Board setup level configurations
 const getBoardSetupLevelConfig = (level) => {
   switch (level) {
@@ -1392,60 +1997,62 @@ const getBoardSetupLevelConfig = (level) => {
       };
   }
 };
+
 // Castling level configurations
 const getCastlingLevelConfig = (level) => {
   switch (level) {
     case 1:
       return { 
-        //fen: '8/8/8/8/8/8/8/R3K2R w KQ - 0 1', 
-        fen: 'rnbqkbnr/pppppppp/8/8/2B5/4PN2/PPPP1PPP/RNBQK2R w KQ - 0 1', // Added white king at h1
+        fen: 'rnbqkbnr/pppppppp/8/8/2B5/4PN2/PPPP1PPP/RNBQK2R w KQ - 0 1',
         optimalMoves: 1,
-        description: "Move your king two squares to castle king-side!",  
+        description: "Move your king two squares to castle king-side!",
+        answerMove: { from: 'e1', to: 'g1' }  // king-side castling
       };
     case 2:
       return { 
-        //fen: '8/8/8/8/8/8/8/R3K2R w KQ - 0 1', 
-        fen: 'rnbqkbnr/pppppppp/8/8/4P3/1PN5/PBPPQPPP/R3KBNR w KQ - 0 1', // Added white king at h1
+        fen: 'rnbqkbnr/pppppppp/8/8/4P3/1PN5/PBPPQPPP/R3KBNR w KQ - 0 1',
         optimalMoves: 1,
-        description: "Move your king two squares to castle queen-side!",  
+        description: "Move your king two squares to castle queen-side!",
+        answerMove: { from: 'e1', to: 'c1' }  // queen-side castling
       };
     case 3:
       return { 
-        //fen: 'r3k2r/8/8/8/8/8/8/8 b kq - 0 1',
         fen: 'rnbqkbnr/pppppppp/8/8/8/4P3/PPPPBPPP/RNBQK1NR w KQ - 0 1',
         optimalMoves: 1,
-        description: "The knight is in the way! Move it, then castle king-side.",  
+        description: "The knight is in the way! Move it, then castle king-side.",
+        answerMove: { from: 'e1', to: 'g1' }
       };
     case 4:
       return { 
-        //fen: '8/8/8/8/8/8/PPPPPPPP/R3K2R w KQ - 0 1', 
-        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1', // Added white king at h1
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1',
         optimalMoves: 1,
-        description: "Castle king-side! You need to move out pieces first.",  
+        description: "Castle king-side! You need to move out pieces first.",
+        answerMove: { from: 'e1', to: 'g1' }
       };
     case 5:
       return { 
-        //fen: '8/8/8/8/8/8/8/R3K1NR w KQ - 0 1', 
-        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1', // Added white king at h1
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1',
         optimalMoves: 1,
-        description: "Castle queen-side! You need to move out pieces first.",  
+        description: "Castle queen-side! You need to move out pieces first.",
+        answerMove: { from: 'e1', to: 'c1' }
       };
     case 6:
       return { 
-        //fen: 'r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1', 
-        fen: 'rnbqkbnr/pppppppp/8/8/3P4/1PN1PN2/PBPQBPPP/R3K1R1 w KQkq - 0 1', // Added white king at h1
+        fen: 'rnbqkbnr/pppppppp/8/8/3P4/1PN1PN2/PBPQBPPP/R3K1R1 w KQkq - 0 1',
         optimalMoves: 1,
-        description: "You cannot castle if the king has already moved or the rook has already moved.",  
+        description: "You cannot castle if the king or rook has already moved. Now castle queen-side.",
+        answerMove: { from: 'e1', to: 'c1' }  // Left-side castling for level 6.
       };
     default:
       return { 
-        //fen: '8/8/8/8/8/8/8/R3K2R w KQ - 0 1', 
-        fen: '8/8/8/8/8/8/8/R3K2k w KQ - 0 1', // Added white king at h1
+        fen: '8/8/8/8/8/8/8/R3K2k w KQ - 0 1',
         optimalMoves: 1,
-        description: "",  
+        description: "",
       };
   }
 };
+
+
 
 // En passant level configurations
 const getEnPassantLevelConfig = (level) => {
@@ -1454,34 +2061,54 @@ const getEnPassantLevelConfig = (level) => {
       return { 
         fen: 'rnbqkbnr/ppp1pppp/8/2Pp4/8/8/PP1PPPPP/RNBQKBNR w - a6 0 1', 
         optimalMoves: 1,
-        description: "Black just moved the pawn by two squares! Take it en passant.",  
+        description: "Black just moved the pawn by two squares! Take it en passant.",
+        answerMove: { from: "c5", to: "d6" }
       };
     case 2:
       return { 
-        fen: 'rnbqkbnr/ppp1pp1p/8/2Pp2pP/8/8/PP1PPPP1/RNBQKBNR w - b6 0 1', 
+        fen: 'rnbqkbnr/pppppp1p/8/2P3pP/8/8/PP1PPPP1/RNBQKBNR w - b6 0 1', 
         optimalMoves: 1,
-        description: "En passant only works immediately after the opponent moved the pawn.",  
+        description: "En passant only works immediately after the opponent moved the pawn.",
+        answerMove: { from: "h5", to: "g6" }
       };
     case 3:
       return { 
         fen: 'rnbqkbnr/p1pppppp/P7/1pP5/8/8/PP1PPPP1/RNBQKBNR w - c6 0 1', 
         optimalMoves: 1,
-        description: "En passant only works if your pawn is on the 5th rank.",  
+        description: "En passant only works if your pawn is on the 5th rank.",
+        answerMove: { from: "c5", to: "b6" }
       };
     case 4:
       return { 
         fen: 'rnbqkbnr/p1pppppp/8/1pPPP2P/8/8/PP1P1PP1/RNBQKBNR w - d6 0 1', 
         optimalMoves: 1,
-        description: "Take all the pawns en passant!",  
+        description: "Take all the pawns en passant!",
+        answerMove: { from: "c5", to: "b6" }
+      };
+    case 5:
+      return { 
+        fen: 'rnbqkbnr/ppp1pppp/8/2Pp4/8/8/PP1PPPPP/RNBQKBNR w - a6 0 1', 
+        optimalMoves: 1,
+        description: "En passant level 5.",
+        answerMove: { from: "c5", to: "d6" }
+      };
+    case 6:
+      return { 
+        fen: 'rnbqkbnr/ppp1pppp/8/2Pp4/8/8/PP1PPPPP/RNBQKBNR w - a6 0 1', 
+        optimalMoves: 1,
+        description: "En passant level 6.",
+        answerMove: { from: "c5", to: "d6" }
       };
     default:
       return { 
         fen: 'rnbqkbnr/ppp1pppp/8/2Pp4/8/8/PP1PPPPP/RNBQKBNR w - a6 0 1', 
         optimalMoves: 1,
-        description: "Black just moved the pawn by two squares! Take it en passant.",  
+        description: "Black just moved the pawn by two squares! Take it en passant.",
+        answerMove: { from: "c5", to: "b6" }
       };
   }
 };
+
 
 // Stalemate level configurations
 const getStalemateLevelConfig = (level) => {
@@ -1491,40 +2118,45 @@ const getStalemateLevelConfig = (level) => {
         fen: 'k7/8/8/6B1/8/1R6/8/7K w - - 0 1', 
         optimalMoves: 1,
         description: "To stalemate black: - Black cannot move anywhere - There is no check.",  
+        answerMove: { from: 'g5', to: 'e3' }
       };
     case 2:
       return { 
         fen: '8/7p/4N2k/8/8/3N4/8/1K6 w - - 0 1', 
         optimalMoves: 1,
-        description: "To stalemate black: - Black cannot move anywhere - There is no check.",  
+        description: "To stalemate black: - Black cannot move anywhere - There is no check.", 
+        answerMove: { from: 'd3', to: 'f4' } 
       };
     case 3:
       return { 
         fen: '4k3/6p1/5p2/p4P2/PpB2N2/1K6/8/3R4 w - - 0 1', 
         optimalMoves: 1,
         description: "To stalemate black: - Black cannot move anywhere - There is no check.",  
+        answerMove: { from: 'f4', to: 'g6' }
       };
     case 4:
       return { 
         fen: '8/6pk/6np/7K/8/3B4/8/1R6 w - - 0 1', 
         optimalMoves: 1,
-        description: "To stalemate black: - Black cannot move anywhere - There is no check.",  
+        description: "To stalemate black: - Black cannot move anywhere - There is no check.",
+        answerMove: { from: 'b1', to: 'b8' }  
       };
     case 5:
       return { 
         fen: '7R/pk6/p1pP4/K7/3BB2p/7p/1r5P/8 w - - 0 1', 
         optimalMoves: 1,
-        description: "To stalemate black: - Black cannot move anywhere - There is no check.",  
+        description: "To stalemate black: - Black cannot move anywhere - There is no check.",
+        answerMove: { from: 'd4', to: 'b2' }  
       };
     default:
       return { 
         fen: 'k7/8/8/6B1/8/1R6/8/7K w - - 0 1', 
         optimalMoves: 1,
-        description: "To stalemate black: - Black cannot move anywhere - There is no check.",  
+        description: "To stalemate black: - Black cannot move anywhere - There is no check.",
+        answerMove: { from: 'g5', to: 'e3' }  
       };
   }
 };
-
 
 //Advanced Category
 // Piece Value level configurations
@@ -1534,37 +2166,43 @@ const getPieceValueLevelConfig = (level) => {
       return { 
         fen: '8/8/2qrbnp1/3P4/8/8/8/4K2k w - - 0 1', 
         optimalMoves: 1,
-        description: "Take the piece with the highest value! Queen > Bishop",  
+        description: "Take the piece with the highest value! Queen > Bishop",
+        answerMove: { from: 'd5', to: 'c6' }  
       };
     case 2:
       return { 
         fen: '8/8/4b3/1p6/6r1/8/4Q3/4K2k w - - 0 1', 
         optimalMoves: 1,
-        description: "Take the piece with the highest value! Do not exchange a higher valued piece for a less valuable one.",  
+        description: "Take the piece with the highest value! Do not exchange a higher valued piece for a less valuable one.",
+        answerMove: { from: 'e2', to: 'e6' }  
       };
     case 3:
       return { 
         fen: '5b1k/8/6N1/2q5/3Kn3/2rp4/3B4/8 w - - 0 1', 
         optimalMoves: 1,
-        description: "Take the piece with the highest value! Make sure your move is legal!",  
+        description: "Take the piece with the highest value! Make sure your move is legal!", 
+        answerMove: { from: 'd4', to: 'e4' } 
       };
     case 4:
       return { 
         fen: '1k4q1/pp6/8/3B4/2P5/1P1p2P1/P3Kr1P/3n4 w - - 0 1', 
         optimalMoves: 1,
         description: "Take the piece with the highest value!",  
+        answerMove: { from: 'e2', to: 'd1' }
       };
     case 5:
       return { 
         fen: '7k/3bqp1p/7r/5N2/6K1/6n1/PPP5/R1B5 w - - 0 1', 
         optimalMoves: 1,
         description: "Take the piece with the highest value!",  
+        answerMove: { from: 'c1', to: 'h6' }
       };
     default:
       return { 
         fen: '8/8/2qrbnp1/3P4/8/8/8/4K2k w - - 0 1', 
         optimalMoves: 1,
-        description: "Take the piece with the highest value!",  
+        description: "Take the piece with the highest value!", 
+        answerMove: { from: 'd5', to: 'c6' } 
       };
   }
 };
@@ -1615,7 +2253,6 @@ const getCheckInTwoLevelConfig = (level) => {
       };
   }
 };
-
 
 useEffect(() => {
   setCurrentCategory("Chess Pieces");
@@ -1704,14 +2341,19 @@ return (
               Reset Progress
             </Button>
             {status === "failed" && (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={retryLevel}
-                sx={{ backgroundColor: "#D32F2F", "&:hover": { background: "#FF6659" } }}
-              >
-                Retry
-              </Button>
+              <div style={{ textAlign: 'center' }}>
+                <Typography variant="subtitle1" color="error" sx={{ mb: 1 }}>
+                  Puzzle failed! Last white move puts the position of white in a compromising situation.
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={retryLevel}
+                  sx={{ backgroundColor: "#D32F2F", "&:hover": { background: "#FF6659" } }}
+                >
+                  Retry
+                </Button>
+              </div>
             )}
           </div>
         </div>
