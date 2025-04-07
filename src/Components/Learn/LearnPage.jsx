@@ -274,8 +274,6 @@ const LearnPage = () => {
   };
   
   
-  
-  
   {/*const handleSquareClick = (square) => { 
     // Prevent moving black pieces
     const piece = game.get(square);
