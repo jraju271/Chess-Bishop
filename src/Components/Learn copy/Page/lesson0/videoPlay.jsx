@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, Select, MenuItem, IconButton, Typography } from '@mui/material';
-import TamilVideo from '../../../../assets/Video/History(tamil).mp4';
-import EnglishVideo from '../../../../assets/Video/History(Eng).mp4';
+//import TamilVideo from '../../../../assets/Video/History(tamil).mp4';
+//import EnglishVideo from '../../../../assets/Video/History(Eng).mp4';
 
 import LanguageIcon from '@mui/icons-material/Language';
 
