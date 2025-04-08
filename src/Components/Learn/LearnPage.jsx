@@ -1573,31 +1573,31 @@ else if (currentCategory === "Intermediate" && currentStage.name === "Castling")
       case 2:
         return { 
           fen: '8/8/8/8/8/8/3P4/4K2k w - - 0 1', 
-          stars: ['d3', 'd4'], 
+          stars: ['d4'], 
           optimalMoves: 2 
         };
       case 3:
         return { 
           fen: '8/8/8/8/8/8/3P4/4K2k w - - 0 1', 
-          stars: ['d3', 'd4', 'e5'], 
+          stars: ['d4', 'e5'], 
           optimalMoves: 3 
         };
       case 4:
         return { 
           fen: '7k/8/8/8/8/8/3P2P1/4K3 w - - 0 1', 
-          stars: ['d3', 'd4', 'c5', 'g3'], 
+          stars: ['d4', 'c5', 'g4'], 
           optimalMoves: 4 
         };
       case 5:
         return { 
           fen: '7k/8/8/8/8/8/3P2P1/4K3 w - - 0 1', 
-          stars: ['d3', 'd4','g3', 'g4', 'f5'], 
+          stars: ['d4', 'g4', 'f5'], 
           optimalMoves: 6 
         };
       case 6:
         return { 
           fen: '7k/8/8/8/8/8/3P2P1/4K3 w - - 0 1', 
-          stars: ['d3', 'd4', 'g3', 'g4', 'f5', 'e5'], 
+          stars: ['d4', 'g4', 'f5', 'e5'], 
           optimalMoves: 8 
         };
       default:
